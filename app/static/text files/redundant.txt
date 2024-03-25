@@ -1,0 +1,40 @@
+"""@app.route('/analysis')
+@login_required
+def analysis():
+    platforms = []
+    for game in Games.query.all():
+        if game.platform not in platforms:
+            platforms.append(game.platform)
+    print(platforms)
+    return redirect(url_for('index'))"""
+
+
+"""@app.route('/database', methods=['GET', 'POST'])
+@login_required
+def database():
+    with open('vgsales.csv', 'r') as csvfile:
+        tbl_reader = csv.reader(csvfile, delimiter=',')
+        next(csvfile)
+        id = 1
+        for row in tbl_reader:
+            game = Games(game_id=id, game_title=row[1], platform=row[2], year=row[3], genre=row[4],
+                         publisher=row[5], global_sales=row[10], sales_ranking=row[0])
+            db.session.add(game)
+            db.session.commit()
+            id += 1
+
+    return redirect(url_for('index'))"""
+
+"""def convert_bools():
+    text = open('video_games.csv', 'r')
+    text = ''.join([i for i in text])
+
+    text = text.replace('True', int('1'))
+    text = text.replace('False', int('0'))
+
+    x = open('output2.csv', 'w')
+    x.writelines(text)
+    x.close()
+
+
+    return redirect(url_for('index'))"""
