@@ -38,3 +38,32 @@ def database():
 
 
     return redirect(url_for('index'))"""
+
+
+
+"""def check_data():
+    for game in Games.query.all():
+        # check if any null values
+        if game.game_title == None:
+            print(game)
+            print('Game title is null')
+        if game.platform == None:
+            print(game)
+            print('Platform is null')
+        if game.year == None:
+            print(game)
+            print('Year is null')
+        if game.genre == None:
+            print(game)
+            print('Genre is null')
+        if game.publisher == None:
+            print(game)
+            print('Publisher is null')
+        if game.global_sales == None:
+            print(game)
+            print('Global sales is null')
+        if game.sales_ranking == None:
+            print(game)
+            print('Sales ranking is null')
+    print("Done checking data integrity")
+    return redirect(url_for('index'))"""

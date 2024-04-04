@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Create Team</h1>
+
+<form action="{{url_for('create_team')}}" method="post">
+    {{form.hidden_tag()}}
+
+    <label for="team_name">Team Name</label>
+    <input type="text" name="team_name" id="team_name" required>
+
+    <label for="team_bio">Team Bio</label>
+    <textarea type="textarea" name="team_bio" id="team_bio"></textarea>
+
+    <label for="limit">Team Size Limit</label>
+    <input type="number" name="limit" id="limit" required>
+
+    <label for="availability">Availability</label>
+    <select id="availability" name="availability">
+        <option value="Any Availability">Any Availability</option>
+        <option value="Monday">Monday</option>
+        <option value="Tuesday">Tuesday</option>
+        <option value="Wednesday">Wednesday</option>
+        <option value="Thursday">Thursday</option>
+        <option value="Friday">Friday</option>
+        <option value="Saturday">Saturday</option>
+        <option value="Sunday">Sunday</option>
+        <option value="Weekdays">Weekdays</option>
+        <option value="Weekends">Weekends</option>
+        <option value="Anytime">Anytime</option>
+        <option value="After School">After School</option>
+        <option value="Before School">Before School</option>
+        <option value="Unsure">Unsure</option>
+    </select>
+
+    <label for="skill_level">Skill Level</label>
+    <select id="skill_level" name="skill_level">
+        <option value="Any Skill Level">Any Skill Level</option>
+        <option value="Beginner">Beginner</option>
+        <option value="Intermediate">Intermediate</option>
+        <option value="Advanced">Advanced</option>
+        <option value="Expert">Expert</option>
+        <option value="Unsure">Any</option>
+    </select>
+
+    <input type="submit" value="Create Team">
+
+</form>
+
+{% endblock %}

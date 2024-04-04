@@ -20,8 +20,10 @@
       {% else %}
 
         <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('create_post') }}">Create Post</a>
         <a href="{{ url_for('search') }}">Search</a>
         <a href="{{ url_for('user_search') }}">Find Friends</a>
+        <a href="{{url_for('team_search')}}">Find Teams</a>
         <a href="{{ url_for('edit_profile') }}">Edit Profile</a>
         <a href="{{ url_for('user', username=current_user.username) }}">{{current_user.username}}</a>
         <a href="{{ url_for('logout') }}">Logout</a>

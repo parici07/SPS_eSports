@@ -7,7 +7,7 @@
 {% if games %}
     <ul>
         {% for game in games %}
-            <li><a href="{{ url_for('game', game_id=game.game_id) }}">{{ game.game_title }}</a></li>
+            <li><a href="{{ url_for('game', game_id=game.game_id) }}">{{ game.game_title }} for {{game.platform}}</a></li>
         {% endfor %}
     </ul>
 {% else %}

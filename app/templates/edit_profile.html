@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+<a href="{{url_for('upload_pfp')}}">Upload Profile Picture</a>
 <form action="{{url_for('edit_profile')}}" method="post">
     {{ form.hidden_tag() }}
 

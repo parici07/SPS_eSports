@@ -11,5 +11,12 @@
 <p>Global Sales: {{game.global_sales}}</p>
 <p> Sales Ranking: {{game.sales_ranking}}</p>
 
+<h2>Posts about this game</h2>
+<a href="{{url_for('game_post', game_id=game.game_id)}}">Create a post about this game</a>
+{% for post in posts %}
+    <hr>
+    <h3>{{post.post_title}} | posted on {{post.post_date}}</h3>
+    <p>{{post.post_content}}</p>
+{% endfor %}
 
 {% endblock %}

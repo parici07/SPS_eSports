@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>{{team.team_name}}</h1>
+{% if my_team %}
+    <a href="{{url_for('leave_team', team_id=team.team_id)}}">Leave Team</a>
+{% else %}
+    <a href="{{url_for('join_team', team_id=team.team_id)}}">Join Team</a>
+{% endif %}
+
+<p>{{team.team_description}}</p>
+<p>Size Limit: {{team.limit}}</p>
+<p>Availability: {{team.availability}}</p>
+<p>Skill Level: {{team.skill_level}}</p>
+
+<h2>Team Members</h2>
+{% for user in users %}
+    <p><a href="{{ url_for('user', username=user.username) }}">{{ user.username }}</a></p>
+{% endfor %}
+
+{% endblock %}
+

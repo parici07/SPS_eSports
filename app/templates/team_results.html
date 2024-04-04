@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Results</h1>
+
+{% if teams %}
+    <ul>
+        {% for team in teams %}
+            <li><a href="{{url_for('team', team_id=team.team_id)}}">{{team.team_name}}</a></li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No teams found</p>
+{% endif %}
+
+{% endblock %}
