@@ -3,6 +3,15 @@
 
 <h1>Username: {{user.username}}</h1>
 
+<!-- use this later when i have fontawesome
+{% if user.role == "Staff" %}
+    <h3>Staff</h3>
+{% endif %}
+
+{% if user.role == "Sponsor" %}
+    <h3>Sponsor</h3>
+{% endif %}-->
+
 {% if user.pfp %}
 <img style="width: 100px; height=auto;" src="{{url_for('static', filename='pfps/' + user.pfp)}}" alt="profile picture">
 {% endif %}
@@ -34,6 +43,18 @@
 <h3>Availability: {{user.availability}}</h3>
 <h3>Skill Level: {{user.skill_level}}</h3>
 
+<h3>Favourite Games</h3>
+{% for favourite in favourites %}
+    <li>{{favourite.game_title}}</li>
+{% endfor %}
+
+<h3>Tournaments Won</h3>
+{% for tournament in tournaments %}
+    <hr>
+    <h4>{{tournament.tournament_name}}</h4>
+{% endfor %}
+
+<h3>Posts</h3>
 {% for post in posts %}
     <hr>
     <h3><a href="{{url_for('post', post_id=post.post_id)}}">{{post.post_title}} | posted {{post.post_date}}</a></h3>

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, IntegerField, \
-    DateField, FileField
+    DateField, FileField, SelectMultipleField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, optional
 from app.models import User
 
@@ -109,6 +109,9 @@ class PostForm(FlaskForm):
     post_type = SelectField('Post Topic', choices=POST_TOPIC_CHOICES)
     submit = SubmitField('Post')
 
+class CommentForm(FlaskForm):
+    comment_content = StringField('Comment Content', validators=[DataRequired()])
+    submit = SubmitField('Comment')
 
 class CreateTournamentForm(FlaskForm):
     tournament_name = StringField('Tournament Name', validators=[DataRequired()])
@@ -117,6 +120,7 @@ class CreateTournamentForm(FlaskForm):
     tournament_end = DateField('End Date', format='%Y-%m-%d', validators=[DataRequired()])
     tournament_skill_level = SelectField('Skill Level', choices=TEAM_SKILL_CHOICES)
     tournament_min_grade = SelectField('Minimum Grade', choices=GRADE_CHOICES)
+    participants = IntegerField('Participants', validators=[DataRequired()])
     submit = SubmitField('Create Tournament')
 
 class UploadPfpForm(FlaskForm):
@@ -130,3 +134,15 @@ class TournamentSearchForm(FlaskForm):
     tournament_start = DateField('Start Date',format='%Y-%m-%d', validators=[optional()])
     tournament_end = DateField('End Date', format='%Y-%m-%d', validators=[optional()])
     submit = SubmitField('Search')
+
+class AddWinnerForm(FlaskForm):
+    winner = StringField('Winner', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+class AddMatchDetailsForm(FlaskForm):
+    player1 = SelectField('Player 1', validators=[DataRequired()])
+    player2 = SelectField('Player 2', validators=[DataRequired()])
+    match_date = DateField('Match Date', format='%Y-%m-%d', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Add Players to Match {{match.round_match}}, Round {{match.round}}</h1>
+
+<form action="{{url_for('add_match_details', match_id=match.match_id)}}" method="post">
+  {{form.hidden_tag()}}
+
+    <label for="player1">Player 1</label>
+    <select name="player1" id="player1" required>
+        {% for choice in choices %}
+        <option value="{{choice[0]}}">{{choice[1]}}</option>
+        {% endfor %}
+    </select>
+
+    <label for="player2">Player 2</label>
+    <select name="player2" id="player2" required>
+        {% for choice in choices %}
+        <option value="{{choice[0]}}">{{choice[1]}}</option>
+        {% endfor %}
+    </select>
+
+    <label for="match_date">Match Date</label>
+    <input type="date" name="match_date" id="match_date" required>
+
+    <input type="submit" value="Add Players">
+</form>
+
+{% endblock %}
+

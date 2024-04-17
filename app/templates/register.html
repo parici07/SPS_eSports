@@ -2,7 +2,8 @@
 
 {% block content %}
 
-<form action="" method ="post" novalidate>
+<div class="login-form">
+  <form action="" method ="post" novalidate>
   {{form.hidden_tag()}}
 
   <label for="username">Username</label>
@@ -39,6 +40,8 @@
   <input type="submit" value="Register">
 
 </form>
+</div>
+
 
 
 {% endblock %}

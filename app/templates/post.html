@@ -14,7 +14,7 @@
 <hr>
 <p>{{post.post_content}}</p>
 
-<p>{{post.likes}}</p>
+<p>Likes: {{post.likes}}</p>
 
 {% if is_liked == 1 %}
     <a href="{{url_for('like', post_id=post.post_id)}}">Unlike</a>
@@ -23,5 +23,17 @@
         <a href="{{url_for('like', post_id=post.post_id)}}">Like</a>
     {% endif %}
 {% endif %}
+
+<a href="{{url_for('post_comment', post_id=post.post_id)}}">Reply</a>
+
+<h2>Comments</h2>
+{% for comment in comments %}
+<hr>
+<p><a href="{{url_for('user', username=comment.username)}}">{{comment.username}}</a> said:</p>
+<p>{{comment.comment_content}}</p>
+<p>{{comment.comment_date}}</p>
+{% endfor %}
+
+
 
 {% endblock %}

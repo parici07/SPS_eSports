@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>{{tournament.tournament_name}}</h1>
+
+{% if in_tournament == 0 %}
+    <a href="{{url_for('join_tournament', tournament_id=tournament.tournament_id)}}">Join Tournament</a>
+{% else %}
+    <a href="{{url_for('join_tournament', tournament_id=tournament.tournament_id)}}">Leave Tournament</a>
+{% endif %}
+
+<h2>{{tournament.tournament_description}}</h2>
+
+<h3>Start Date: {{tournament.tournament_start}}</h3>
+<h3>End Date: {{tournament.tournament_end}}</h3>
+
+<h4>Min Grade: {{tournament.tournament_min_grade}}</h4>
+<h4>Skill Level: {{tournament.tournament_skill_level}}</h4>
+
+{% if user.role == 'Staff' %}
+    <a href="{{url_for('add_winner', tournament_id=tournament.tournament_id)}}">Add Winner</a>
+{% endif %}
+
+<h2>Participants</h2>
+{% for participant in participants %}
+    <li>{{participant.username}}</li>
+{% endfor %}
+
+<h2>Matches</h2>
+{% for match in matches %}
+    <li>
+        <a href="{{url_for('match', match_id=match.match_id)}}">Match {{match.round_match}}, Round {{match.round}}</a>
+    </li>
+{% endfor %}
+
+{% endblock %}

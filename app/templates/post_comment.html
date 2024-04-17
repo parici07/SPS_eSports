@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Comment on {{post_user.username}}'s post '{{post.post_title}}'</h1>
+
+<form action="{{url_for('post_comment', post_id=post.post_id)}}" method="post">
+    {{ form.hidden_tag() }}
+
+    <label for="comment_content">Comment:</label>
+    <textarea name="comment_content" id="comment_content" rows="5" cols="50"></textarea>
+
+    <input type="submit" value="Submit">
+</form>
+
+{% endblock %}

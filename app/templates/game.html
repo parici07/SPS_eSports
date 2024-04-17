@@ -4,6 +4,12 @@
 
 <h1>{{game.game_title}}</h1>
 
+{% if favourite == 0 %}
+    <a href="{{url_for('favourite_game', game_id=game.game_id)}}">Favourite</a>
+{% else %}
+    <a href="{{url_for('favourite_game', game_id=game.game_id)}}">Unfavourite</a>
+{% endif %}
+
 <p>Platform: {{game.platform}}</p>
 <p>Genre: {{game.genre}}</p>
 <p>Year: {{game.year}}</p>

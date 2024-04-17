@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <a href="{{url_for('add_match_details', match_id=match.match_id)}}">Add Players and Date</a>
+  <h1>Match {{match.round_match}}, Round {{match.round}}</h1>
+
+  <h2>Players</h2>
+  {% for player in players %}
+    <p>{{ player.username }}</p>
+  {% endfor %}
+
+{% endblock %}
