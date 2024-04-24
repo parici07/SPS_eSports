@@ -15,8 +15,14 @@
 <h3>Start Date: {{tournament.tournament_start}}</h3>
 <h3>End Date: {{tournament.tournament_end}}</h3>
 
+{% if winner %}
+    <h3>Winner: {{winner.username}}</h3>
+{% endif %}
+
 <h4>Min Grade: {{tournament.tournament_min_grade}}</h4>
 <h4>Skill Level: {{tournament.tournament_skill_level}}</h4>
+
+<h4>Participants: {{p_number}}/{{tournament.participants}}</h4>
 
 {% if user.role == 'Staff' %}
     <a href="{{url_for('add_winner', tournament_id=tournament.tournament_id)}}">Add Winner</a>

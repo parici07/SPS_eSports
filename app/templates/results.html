@@ -2,16 +2,33 @@
 
 {% block content %}
 
-<h1>Results</h1>
 
-{% if games %}
-    <ul>
-        {% for game in games %}
-            <li><a href="{{ url_for('game', game_id=game.game_id) }}">{{ game.game_title }} for {{game.platform}}</a></li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No games found</p>
-{% endif %}
+
+<div class="centre">
+
+    <div class="results">
+        <a href="{{ url_for('search') }}"><i class="fa-solid fa-arrow-left"></i> Back to search</a>
+        {% if games %}
+        <table>
+
+            <tr>
+                <th>Game</th>
+                <th>Platform</th>
+            </tr>
+
+            {% for game in games %}
+            <tr>
+                <td><a href="{{url_for('game', game_id=game.game_id)}}"><i class="fa-solid fa-circle-chevron-right"></i>    {{ game.game_title }}</a></td>
+                <td>{{ game.platform }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p>No games found</p>
+        {% endif %}
+    </div>
+</div>
+
+
 
 {% endblock %}

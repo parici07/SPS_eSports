@@ -1,8 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!--<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <script src="https://kit.fontawesome.com/ea0cb5ba41.js" crossorigin="anonymous"></script>
+
+    <script>
+
+        function showDropdown(){
+           var dropdown = document.getElementById("dropdown")
+              if(dropdown.style.display === "none" || dropdown.style.display === ""){
+                dropdown.style.display = "flex";
+               } else {
+                dropdown.style.display = "none";
+                }
+        }
+
+
+
+        function closeFlash(){
+            var flash = document.getElementsByClassName("flash")[0];
+            flash.style.display = "none";
+        }
+
+        function navBar(){}
+
+        function showFilters(){
+            var filters = document.getElementsByClassName("search-filter-container")[0];
+            if(filters.style.display === "none" || filters.style.display === ""){
+                filters.style.display = "flex";
+            } else {
+                filters.style.display = "none";
+            }
+        }
+    </script>
     <meta charset="UTF-8">
     {% if title %}
     <title> {{title}}</title>
@@ -11,7 +41,7 @@
     {% endif %}
 </head>
 <body>
-  <div class="header">
+  <div id="top" class="header">
 
 
       {% if current_user.is_anonymous %}
@@ -20,7 +50,7 @@
         <a href="{{ url_for('register') }}">Register</a>
 
       {% else %}
-        <h1 onclick="location.href='index'">SPS ESPORTS</h1>
+        <h1 onclick="location.href='{{url_for('index')}}'">SPS ESPORTS</h1>
 
         <a href="{{ url_for('index') }}"><i class="fa-solid fa-house"></i></a>
         <a href="{{ url_for('create_post') }}">Create Post</a>
@@ -28,23 +58,44 @@
         <a href="{{ url_for('user_search') }}">Users</a>
         <a href="{{ url_for('tournament_search') }}">Tournaments</a>
         <a href="{{url_for('team_search')}}">Teams</a>
+        <div class="expand">
+            <div class="expand-button">
+                <a href="javascript:showDropdown()">Leaderboards  <i class="fa-solid fa-chevron-down"></i></a>
+            </div>
+            <div id="dropdown" class="expand-child">
+                <a href="{{ url_for('tournament_leaderboard') }}">Tournament Leaderboard</a>
+                <a href="{{ url_for('match_leaderboard') }}">Match Leaderboard</a>
+            </div>
+
+        </div>
+
+
         <a href="{{ url_for('edit_profile') }}">Edit Profile</a>
-        <a href="{{ url_for('user', username=current_user.username) }}"><i class="fa-solid fa-user"></i>{{current_user.username}}</a>
+        <a href="{{ url_for('user', username=current_user.username) }}"><i class="fa-solid fa-user"></i>   {{current_user.username}}</a>
         <a href="{{ url_for('logout') }}">Logout</a>
+        <a href="javascript:navBar()"><i class="fa-solid fa-bars"></i></a>
+
 
       {% endif %}
   </div>
+    <hr>
 
   {% with messages = get_flashed_messages() %}
   {% if messages %}
 
-  <ul>
-      {% for message in messages %}
-      <li>{{message}}</li>
-      {% endfor %}
-  </ul>
+    {% for message in messages %}
+        <div class="flash">
+            <a href="javascript:closeFlash()"><i class="fa-regular fa-circle-xmark"></i></a>
+            {{message}}
+        </div>
+    {% endfor %}
+
   {% endif %}
   {% endwith %}
+
+  <div class="topbutton">
+    <a href="#top"><i class="fa-solid fa-arrow-up"></i></a>
+  </div>
 
 {% block content %} {% endblock %}
 </body>

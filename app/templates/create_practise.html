@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Add Practise</h1>
+
+<form action="{{url_for('create_practise', team_id=team_id)}}" method="post">
+    {{form.hidden_tag()}}
+
+    <label for="practise_name">Practise Name</label>
+    <input type="text" name="practise_name" id="practise_name" required>
+
+    <label for="practise_description">Practise Description</label>
+    <textarea name="practise_description" id="practise_description"></textarea>
+
+    <label for="practise_date">Practise Date</label>
+    <input type="date" name="practise_date" id="practise_date" required>
+
+    <label for="practise_time">Practise Time</label>
+    <input type="time" name="practise_time" id="practise_time" required>
+
+    <input type="submit" value="Add Practise">
+</form>
+
+
+{% endblock %}

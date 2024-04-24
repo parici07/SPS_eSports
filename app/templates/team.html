@@ -14,6 +14,10 @@
 <p>Availability: {{team.availability}}</p>
 <p>Skill Level: {{team.skill_level}}</p>
 
+{% if my_team %}
+    <a href="{{url_for('create_practise', team_id=team.team_id)}}">Add Practise</a>
+{% endif %}
+
 <h2>Team Members</h2>
 {% for user in users %}
     <p><a href="{{ url_for('user', username=user.username) }}">{{ user.username }}</a></p>

@@ -1,0 +1,221 @@
+
+/* JUST FOR TESTING */
+
+input{
+    color: black;
+}
+
+textarea{
+    color: black;
+}
+/* OVERALL - all elements, fonts, animations */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: white;
+}
+
+body{
+    background: url('../images/bg gif fast.gif') no-repeat;
+    background-size: cover;
+    }
+
+:root{
+    --accent: #e81c29;
+    --bg: #181818;
+}
+
+@font-face{
+    font-family: 'Nausea';
+    src: url('../fonts/Nau Sea.otf') format('opentype');
+}
+
+@font-face{
+    font-family: 'Pixelmix';
+    src: url('../fonts/Pixelmix.ttf') format('truetype');
+}
+
+@font-face{
+    font-family: 'UAV';
+    src: url('../fonts/UAV-OSD-Mono.ttf') format('truetype');
+}
+
+/* FLASHED MESSAGES */
+.flash{
+    display: flex;
+    font-family: 'Pixelmix';
+    font-size: 0.8em;
+    padding: 1em;
+}
+
+
+/* HEADER ELEMENTS */
+
+.header{
+    display:flex;
+    align-items: center;
+    padding: 1em 0.5em;
+
+}
+
+.header a{
+    padding: 0em 1em;
+    font-family: 'UAV';
+    font-size: 0.8em;
+    text-decoration: none;
+    transition: 0.5s;
+    position: relative;
+    transition: 0.3s;
+
+}
+
+.header a:hover{
+    color: var(--accent);
+    transition: 0.3s;
+}
+
+.header a::before{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    left: 0;
+    bottom: -2px;
+    background-color: var(--accent);
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform 0.3s;
+
+}
+.header a:hover::before{
+    transform-origin: left;
+    transform: scaleX(1);
+    transition: transform 0.3s;
+}
+
+.header h1{
+    box-shadow: inset 0 0 0 0 var(--bg);
+    font-family: 'Nausea';
+    letter-spacing: 2px;
+    padding: 0 0.5em;
+    position: relative;
+    transition: color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.header h1:hover{
+    box-shadow: inset 300px 0 0 0 var(--accent);
+    color: var(--bg);
+    cursor: pointer;
+}
+/* LOGIN FORM */
+
+.login-form{
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    font-family: 'UAV';
+    font-size: 0.9em;
+    padding: 1em;
+    margin: 1em 0;
+    background-color: rgba(0,0,0,0.5);
+
+}
+
+.login-form form{
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    padding: 1em;
+
+
+}
+
+.login-row{
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: center;
+    margin: 0.5em;
+
+}
+
+.login-form input{
+    padding: 0.5em;
+    margin: 0.5em;
+    border: 2px solid white;
+    border-radius: 5px;
+    background-color: var(--bg);
+    color: white;
+    font-family: 'UAV';
+    font-size: 0.9em;
+
+}
+
+.login-form input[type="submit"]{
+    padding: 1em 2em;
+    transition: 0.5s;
+    }
+
+.login-form input[type="submit"]:hover{
+    background-color: rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+.login-form input[type="checkbox"]{
+    appearance: none;
+    background-color: var(--bg);
+    border: 2px solid white;
+    transition: 0.5s;
+}
+
+.login-form input[type="checkbox"]:hover{
+    cursor: pointer;
+}
+
+.login-form input[type="checkbox"]:checked{
+    background-color: var(--accent);
+    position: relative;
+    transform: rotate(45deg);
+    transition: 0.5s;
+}
+
+.login-form label{
+    font-family: 'UAV';
+    font-size: 0.9em;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media only screen and (max-width: 600px) {
+
+
+
+
+
+}

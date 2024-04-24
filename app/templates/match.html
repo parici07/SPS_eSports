@@ -1,8 +1,21 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <a href="{{url_for('add_match_details', match_id=match.match_id)}}">Add Players and Date</a>
+
+  {% if current_user.role == 'Staff' %}
+    <a href="{{url_for('add_match_winner', match_id=match.match_id)}}">Add Winner</a>
+    <a href="{{url_for('add_match_details', match_id=match.match_id)}}">Add Players and Date</a>
+  {% endif %}
+
   <h1>Match {{match.round_match}}, Round {{match.round}}</h1>
+
+  {% if match.match_date %}
+    <p>Date: {{ match.match_date }}</p>
+  {% endif %}
+
+  {% if winner %}
+    <p>Winner: {{ winner.username }}</p>
+  {% endif %}
 
   <h2>Players</h2>
   {% for player in players %}

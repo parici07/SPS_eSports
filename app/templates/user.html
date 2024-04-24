@@ -1,8 +1,48 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Username: {{user.username}}</h1>
 
+
+<div class="row">
+
+    <div class="half">
+        <div class="user-box">
+            <div class="user-header">
+
+                <div class="row">
+                    <div class="quarter">
+                        {% if user.pfp %}
+                        <img src="{{url_for('static', filename='pfps/' + user.pfp)}}"
+                             alt="profile picture">
+                        {% endif %}
+                    </div>
+                    <div class="three-quarter">
+                        <h3>{{user.username}}</h3>
+                        <a href="{{url_for('following', username=user.username)}}">Following</a>
+                        <a href="{{url_for('followers', username=user.username)}}">Followers</a>
+                    </div>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="half">
+        <div class="user-posts">
+            <h3>Posts</h3>
+            {% for post in posts %}
+            <div class="post">
+                <a href="{{url_for('post', post_id=post.post_id)}}"><i
+                        class="fa-solid fa-circle-chevron-right"></i>   {{post.post_title}}</a>
+                <h4>{{post.post_date}}</h4>
+                <p>{{post.post_content}}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
 <!-- use this later when i have fontawesome
 {% if user.role == "Staff" %}
     <h3>Staff</h3>
@@ -12,17 +52,14 @@
     <h3>Sponsor</h3>
 {% endif %}-->
 
-{% if user.pfp %}
-<img style="width: 100px; height=auto;" src="{{url_for('static', filename='pfps/' + user.pfp)}}" alt="profile picture">
-{% endif %}
+
 
 {% if current_user.username == user.username %}
     <a href="{{url_for('edit_profile')}}">Edit Profile</a>
 {% endif %}
 
 <br>
-<a href="{{url_for('following', username=user.username)}}">Following</a>
-<a href="{{url_for('followers', username=user.username)}}">Followers</a>
+
 
 {% if current_user.username != user.username %}
     {% if mutuals %}
@@ -54,14 +91,15 @@
     <h4>{{tournament.tournament_name}}</h4>
 {% endfor %}
 
-<h3>Posts</h3>
-{% for post in posts %}
-    <hr>
-    <h3><a href="{{url_for('post', post_id=post.post_id)}}">{{post.post_title}} | posted {{post.post_date}}</a></h3>
-    <h4>{{post.post_type}}</h4>
-    <p>{{post.post_content}}</p>
-    <hr>
+<h3>Matches Won</h3>
+{% for match in matches %}
+<hr>
+<h4>Match {{match.round_match}}, Round {{match.round}}</h4>
+<a href="{{url_for('tournament', tournament_id=match.tournament_id)}}">View Tournament</a>
 {% endfor %}
+
+
+
 
 
 

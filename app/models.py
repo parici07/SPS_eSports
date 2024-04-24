@@ -4,6 +4,7 @@ from flask_login import UserMixin
 from app import login
 from sqlalchemy import ForeignKeyConstraint
 
+
 class User(UserMixin, db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -27,7 +28,6 @@ class User(UserMixin, db.Model):
     comments = db.relationship('Comments', back_populates='user')
     matches = db.relationship('Matches', back_populates='user')
     match_users = db.relationship('MatchUsers', back_populates='user')
-
 
     following = db.relationship('Following', backref='user', foreign_keys='Following.user_id')
     followed = db.relationship('Following', foreign_keys='Following.following_id')
@@ -76,6 +76,7 @@ class Teams(db.Model):
 
     user = db.relationship('User', back_populates='teams')
     team_users = db.relationship('TeamUsers', back_populates='team')
+    practises = db.relationship('Practises', back_populates='team')
 
     def __repr__(self):
         return '<Team {}>'.format(self.team_name)
@@ -83,8 +84,9 @@ class Teams(db.Model):
     def get_id(self):
         return str(self.team_id)
 
+
 class TeamUsers(db.Model):
-    team_user_id = db.Column(db.Integer, primary_key=True, index=True, unique=True, nullable=False )
+    team_user_id = db.Column(db.Integer, primary_key=True, index=True, unique=True, nullable=False)
 
     team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), name='fk_team_id', nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), name='fk_user_id', nullable=False)
@@ -98,12 +100,13 @@ class TeamUsers(db.Model):
     def get_id(self):
         return str(self.team_user_id)
 
+
 class Posts(db.Model):
     post_id = db.Column(db.Integer, primary_key=True, index=True, unique=True, nullable=False)
-    post_title = db.Column(db.String(64), index=True, nullable=False)
+    post_title = db.Column(db.String(64), nullable=False)
     post_content = db.Column(db.String(140), nullable=False)
-    post_date = db.Column(db.DateTime, index=True, nullable=False)
-    post_type = db.Column(db.String(64), index=True)
+    post_date = db.Column(db.DateTime, nullable=False)
+    post_type = db.Column(db.String(64))
     likes = db.Column(db.Integer, default=0)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), name='post_user_id', nullable=False)
@@ -117,6 +120,7 @@ class Posts(db.Model):
 
     def get_id(self):
         return str(self.post_id)
+
 
 class Likes(db.Model):
     like_id = db.Column(db.Integer, primary_key=True, index=True, unique=True, nullable=False)
@@ -132,6 +136,7 @@ class Likes(db.Model):
 
     def get_id(self):
         return str(self.like_id)
+
 
 class Comments(db.Model):
     comment_id = db.Column(db.Integer, primary_key=True, index=True, unique=True, nullable=False)
@@ -151,18 +156,19 @@ class Comments(db.Model):
     def get_id(self):
         return str(self.comment_id)
 
+
 class Following(db.Model):
     follow_id = db.Column(db.Integer, primary_key=True, index=True, unique=True, nullable=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), name='follow_user_id', nullable=False)
     following_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), name='follow_following_id', nullable=False)
 
-
     def __repr__(self):
         return '<Following {}>'.format(self.follow_id)
 
     def get_id(self):
         return str(self.follow_id)
+
 
 class Tournaments(db.Model):
     tournament_id = db.Column(db.Integer, primary_key=True, index=True, unique=True, nullable=False)
@@ -178,16 +184,19 @@ class Tournaments(db.Model):
     user = db.relationship('User', back_populates='tournaments')
     tournament_users = db.relationship('TournamentUsers', back_populates='tournament')
     matches = db.relationship('Matches', back_populates='tournament')
+
     def __repr__(self):
         return '<Tournament {}>'.format(self.tournament_name)
 
     def get_id(self):
         return str(self.tournament_id)
 
+
 class TournamentUsers(db.Model):
     tournament_user_id = db.Column(db.Integer, primary_key=True, index=True, unique=True, nullable=False)
 
-    tournament_id = db.Column(db.Integer, db.ForeignKey('tournaments.tournament_id'), name='tournament_tournament_id', nullable=False)
+    tournament_id = db.Column(db.Integer, db.ForeignKey('tournaments.tournament_id'), name='tournament_tournament_id',
+                              nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), name='tournament_user_user_id', nullable=False)
 
     tournament = db.relationship('Tournaments', back_populates='tournament_users')
@@ -199,6 +208,7 @@ class TournamentUsers(db.Model):
     def get_id(self):
         return str(self.tournament_user_id)
 
+
 class Matches(db.Model):
     match_id = db.Column(db.Integer, primary_key=True, index=True, unique=True, nullable=False)
     match_date = db.Column(db.DateTime, index=True)
@@ -206,7 +216,8 @@ class Matches(db.Model):
     round_match = db.Column(db.Integer, nullable=False)
 
     match_winner = db.Column(db.Integer, db.ForeignKey('user.user_id'), name='match_winner_id', nullable=True)
-    tournament_id = db.Column(db.Integer, db.ForeignKey('tournaments.tournament_id'), name='match_tournament_id', nullable=False)
+    tournament_id = db.Column(db.Integer, db.ForeignKey('tournaments.tournament_id'), name='match_tournament_id',
+                              nullable=False)
 
     user = db.relationship('User', back_populates='matches')
     tournament = db.relationship('Tournaments', back_populates='matches')
@@ -217,6 +228,7 @@ class Matches(db.Model):
 
     def get_id(self):
         return str(self.match_id)
+
 
 class MatchUsers(db.Model):
     matchuser_id = db.Column(db.Integer, primary_key=True, index=True, unique=True, nullable=False)
@@ -233,6 +245,7 @@ class MatchUsers(db.Model):
     def get_id(self):
         return str(self.matchuser_id)
 
+
 class FavouriteGames(db.Model):
     favourite_id = db.Column(db.Integer, primary_key=True, index=True, unique=True, nullable=False)
 
@@ -248,6 +261,25 @@ class FavouriteGames(db.Model):
     def get_id(self):
         return str(self.favourite_id)
 
+
+class Practises(db.Model):
+    practise_id = db.Column(db.Integer, primary_key=True, index=True, unique=True, nullable=False)
+    practise_date = db.Column(db.Date, index=True, nullable=False)
+    practise_time = db.Column(db.Time, index=True, nullable=False)
+    practise_name = db.Column(db.String(64), index=True, unique=True)
+    practise_description = db.Column(db.String(140), default='Team Practise')
+
+    team_id = db.Column(db.Integer, db.ForeignKey('teams.team_id'), name='practise_team_id', nullable=False)
+
+    team = db.relationship('Teams', back_populates='practises')
+
+    def __repr__(self):
+        return '<Practise {}>'.format(self.practise_id)
+
+    def get_id(self):
+        return str(self.practise_id)
+
+
 @login.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id)) # returns the user id as an integer
+    return User.query.get(int(user_id))  # returns the user id as an integer

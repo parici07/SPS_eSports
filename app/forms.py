@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectField, IntegerField, \
-    DateField, FileField, SelectMultipleField
+    DateField, FileField, TimeField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, optional
 from app.models import User
 
@@ -116,8 +116,8 @@ class CommentForm(FlaskForm):
 class CreateTournamentForm(FlaskForm):
     tournament_name = StringField('Tournament Name', validators=[DataRequired()])
     tournament_description = StringField('Tournament Description')
-    tournament_start = DateField('Start Date',format='%Y-%m-%d', validators=[DataRequired()])
-    tournament_end = DateField('End Date', format='%Y-%m-%d', validators=[DataRequired()])
+    tournament_start = DateField('Start Date',format='%d-%m-%Y', validators=[DataRequired()])
+    tournament_end = DateField('End Date', format='%d-%m-%Y', validators=[DataRequired()])
     tournament_skill_level = SelectField('Skill Level', choices=TEAM_SKILL_CHOICES)
     tournament_min_grade = SelectField('Minimum Grade', choices=GRADE_CHOICES)
     participants = IntegerField('Participants', validators=[DataRequired()])
@@ -131,8 +131,8 @@ class TournamentSearchForm(FlaskForm):
     tournament_name = StringField('Tournament Name', validators=[DataRequired()])
     tournament_skill_level = SelectField('Skill Level', choices=TEAM_SKILL_CHOICES, validators=[optional()])
     tournament_min_grade = SelectField('Minimum Grade', choices=GRADE_CHOICES, validators=[optional()])
-    tournament_start = DateField('Start Date',format='%Y-%m-%d', validators=[optional()])
-    tournament_end = DateField('End Date', format='%Y-%m-%d', validators=[optional()])
+    tournament_start = DateField('Start Date',format='%d-%m-%Y', validators=[optional()])
+    tournament_end = DateField('End Date', format='%d-%m-%Y', validators=[optional()])
     submit = SubmitField('Search')
 
 class AddWinnerForm(FlaskForm):
@@ -142,7 +142,18 @@ class AddWinnerForm(FlaskForm):
 class AddMatchDetailsForm(FlaskForm):
     player1 = SelectField('Player 1', validators=[DataRequired()])
     player2 = SelectField('Player 2', validators=[DataRequired()])
-    match_date = DateField('Match Date', format='%Y-%m-%d', validators=[DataRequired()])
+    match_date = DateField('Match Date', format='%d-%m-%Y', validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+class AddMatchWinnerForm(FlaskForm):
+    winner = SelectField('Winner', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+
+class CreatePractiseForm(FlaskForm):
+    practise_name = StringField('Practise Name', validators=[DataRequired()])
+    practise_description = StringField('Practise Description')
+    practise_date = DateField('Practise Date', format='%d-%m-%Y', validators=[DataRequired()])
+    practise_time = TimeField('Practise Time', format='%H:%M', validators=[DataRequired()])
+    submit = SubmitField('Create Practise')
 
 

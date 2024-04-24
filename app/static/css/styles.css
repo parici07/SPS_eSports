@@ -1,29 +1,25 @@
 
-/* JUST FOR TESTING */
-
-input{
-    color: black;
-}
-
-textarea{
-    color: black;
-}
 /* OVERALL - all elements, fonts, animations */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    color: white;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: white var(--bg);
+
 }
 
 body{
-    background: url('../images/bg gif fast.gif') no-repeat;
-    background-size: cover;
+    background: var(--bg);
+    color: white;
     }
 
 :root{
     --accent: #e81c29;
     --bg: #181818;
+    --bg2: #282828;
+    --lightbg: rgba(255,255,255,0.05);
 }
 
 @font-face{
@@ -32,13 +28,49 @@ body{
 }
 
 @font-face{
-    font-family: 'Pixelmix';
-    src: url('../fonts/Pixelmix.ttf') format('truetype');
+    font-family: 'Roboto';
+    src: url('.../fonts/roboto/Roboto-Black.ttf') format('truetype');
 }
 
-@font-face{
-    font-family: 'UAV';
-    src: url('../fonts/UAV-OSD-Mono.ttf') format('truetype');
+
+
+/* FLASHED MESSAGES */
+.flash{
+    display: flex;
+    font-family: 'Roboto';
+    font-size: 1em;
+    padding: 1em;
+    margin: 1em;
+    border-radius: 0.5em;
+    background-color: var(--lightbg);
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
+}
+
+.flash a{
+    color: white;
+    padding: 0 0.5em;
+
+}
+
+/* COLUMNS */
+
+.row{
+    display: flex;
+}
+.half{
+    flex: 50%;
+}
+
+.quarter{
+    flex: 25%;
+}
+
+.third{
+    flex: 33.33%;
+}
+
+.three-quarter{
+    flex: 75%;
 }
 
 
@@ -52,13 +84,14 @@ body{
 }
 
 .header a{
-    padding: 0em 1em;
-    font-family: 'UAV';
-    font-size: 0.8em;
+    padding: 0em 0.7em;
+    font-family: 'Roboto';
+    font-size: 1em;
     text-decoration: none;
     transition: 0.5s;
     position: relative;
     transition: 0.3s;
+    color: white;
 
 }
 
@@ -100,19 +133,184 @@ body{
     color: var(--bg);
     cursor: pointer;
 }
+
+.expand{
+    font-family: 'Roboto';
+    padding: 0.5em;
+    position: relative;
+}
+
+.expand-button a:hover{
+    cursor: pointer;
+    color: var(--accent);
+    transition: 0.5s;
+}
+
+
+.expand-child{
+    display: none;
+    z-index: 1;
+    position: absolute;
+    flex-flow: column wrap;
+    top: 100%;
+    left: 0;
+    background-color: var(--bg);
+    transition: 0.5s;
+}
+
+
+.expand-child a{
+    display: block;
+    text-align: center;
+    padding: 0.5em;
+}
+
+.expand-child a:hover{
+    background-color: var(--bg2);
+    transition: 0.5s;
+
+}
+
+/* TEXT STUFF */
+
+h1{
+    font-family: 'Roboto';
+    font-size: 2em;
+}
+
+h2{
+    font-family: 'Roboto';
+    font-size: 1.5em;
+}
+
+.centre h1{
+    text-align: center;
+}
+
+.topbutton{
+    position: fixed;
+    bottom: 1em;
+    right: 1em;
+    padding: 0.5em;
+    border-radius: 50%;
+    background-color: var(--bg);
+    color: white;
+    font-family: 'Roboto';
+    font-size: 1em;
+    transition: 0.5s;
+}
+
+/* GENERAL LINK */
+a{
+
+    color: white;
+    text-decoration: none;
+    transition: 0.5s;
+    padding: 0.5em 0;
+    position: relative;
+}
+
+a:hover{
+    color: var(--accent);
+    transition: 0.5s;
+}
+
+a::before{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    left: 0;
+    bottom: -2px;
+    background-color: var(--accent);
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform 0.3s;
+
+}
+a:hover::before{
+    transform-origin: left;
+    transform: scaleX(1);
+    transition: transform 0.3s;
+}
+
+/* GENERAL FORM STUFF */
+[type="submit"]{
+    padding: 1em 2em;
+    transition: 0.5s;
+    border: 2px solid white;
+    border-radius: 0.5em;
+    background-color: var(--bg);
+    color: white;
+    font-family: 'Roboto';
+    font-size: 1em;
+    }
+
+input[type="submit"]:hover{
+    background-color: rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: 0.5s;
+}
+
+select{
+    padding: 0 0.5em;
+    margin: 0.5em;
+    border: 2px solid white;
+    border-radius: 5px;
+    background-color: var(--bg);
+    color: white;
+    font-family: 'Roboto';
+    font-size: 1em;
+    width: 80vh;
+}
+
+input[type="text"]{
+    padding: 0.5em;
+    margin: 0.5em;
+    border: 2px solid white;
+    border-radius: 5px;
+    background-color: var(--bg);
+    color: white;
+    font-family: 'Roboto';
+    font-size: 1em;
+    width: 80vh;
+}
+
+input[type="number"]{
+
+    padding: 0.5em;
+    margin: 0.5em;
+    border: 2px solid white;
+    border-radius: 5px;
+    background-color: var(--bg);
+    color: white;
+    font-family: 'Roboto';
+    font-size: 1em;
+    width: 80vh;
+}
 /* LOGIN FORM */
+.centre{
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 1em 0;
+
+}
 
 .login-form{
     display: flex;
     flex-flow: column wrap;
     align-items: center;
     justify-content: center;
-    height: 400px;
-    font-family: 'UAV';
-    font-size: 0.9em;
+    width: 30%;
+    font-family: 'Roboto';
+    font-size: 1em;
     padding: 1em;
     margin: 1em 0;
     background-color: rgba(0,0,0,0.5);
+    border-radius: 0.5em;
 
 }
 
@@ -141,21 +339,12 @@ body{
     border-radius: 5px;
     background-color: var(--bg);
     color: white;
-    font-family: 'UAV';
-    font-size: 0.9em;
+    font-family: 'Roboto';
+    font-size: 1em;
 
 }
 
-.login-form input[type="submit"]{
-    padding: 1em 2em;
-    transition: 0.5s;
-    }
 
-.login-form input[type="submit"]:hover{
-    background-color: rgba(255,255,255,0.2);
-    cursor: pointer;
-    transition: 0.5s;
-}
 
 .login-form input[type="checkbox"]{
     appearance: none;
@@ -176,9 +365,285 @@ body{
 }
 
 .login-form label{
-    font-family: 'UAV';
-    font-size: 0.9em;
+    font-family: 'Roboto';
+    font-size: 1em;
 }
+
+/* POSTS AND COMMENTS */
+
+.post-form{
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Roboto';
+    font-size: 1em;
+    padding: 1em;
+    margin: 1em 0;
+    background-color: rgba(0,0,0,0.5);
+    border-radius: 0.5em;
+}
+
+.post-form input{
+    padding: 0.5em;
+    margin: 0.5em;
+    border: 2px solid white;
+    border-radius: 5px;
+    background-color: var(--bg);
+    color: white;
+    font-family: 'Roboto';
+    font-size: 1em;
+
+
+}
+
+.post-form input[type="text"]{
+    width: 80vh;
+}
+.post-form textarea{
+    padding: 0.5em;
+    margin: 0.5em;
+    border: 2px solid white;
+    border-radius: 5px;
+    background-color: var(--bg);
+    color: white;
+    font-family: 'Roboto';
+    font-size: 1em;
+    resize: none;
+    width: 80vh;
+    height: 20vh;
+}
+
+/* MATCH AND TOURNAMENT BOXES */
+
+.event{
+    display: flex;
+    flex-flow: column wrap;
+    background-color: var(--lightbg);
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
+    border-radius: 0.5em;
+    padding: 1em;
+    margin: 0.5em 0;
+    font-family: 'Roboto';
+    width: 90%;
+    background: rgba(255,255,255,0.05);
+}
+
+.event a{
+
+    color: white;
+    text-decoration: none;
+    transition: 0.5s;
+    padding: 0.5em 0;
+    position: relative;
+}
+
+.event a:hover{
+    color: var(--accent);
+    transition: 0.5s;
+}
+
+.event a::before{
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    left: 0;
+    bottom: -2px;
+    background-color: var(--accent);
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform 0.3s;
+
+}
+.event a:hover::before{
+    transform-origin: left;
+    transform: scaleX(1);
+    transition: transform 0.3s;
+}
+
+.event p{
+    padding: 0.5em 0;
+    margin: 0.5em 0;
+}
+
+
+
+/* USER PAGE*/
+
+.user-posts{
+    display: flex;
+    flex-flow: column;
+    height: 90vh;
+    width: 90%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    background-color: var(--lightbg);
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
+    border-radius: 0.5em;
+    padding: 1em;
+    margin: 1em;
+}
+
+.user-posts h3{
+    padding: 0.5em 0;
+    font-family: 'Roboto';
+}
+
+.post{
+    display: flex;
+    flex-flow: column wrap;
+    background-color: var(--lightbg);
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
+    border-radius: 0.5em;
+    padding: 1em;
+    margin: 0.5em 0;
+    font-family: 'Roboto';
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+
+}
+
+.post h4{
+
+    margin: 0.5em 0;
+}
+
+.user-box{
+    display: flex;
+    flex-flow: column wrap;
+    background-color: var(--lightbg);
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
+    border-radius: 0.5em;
+    padding: 1em;
+    margin: 1em;
+    font-family: 'Roboto';
+    width: 90%;
+    background: rgba(255,255,255,0.05);
+}
+
+.user-header{
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    padding: 0.5em;
+    margin: 0.5em 0;
+    height: 20vh;
+}
+.user-header .quarter{
+    height: 20vh;
+    width: 20vh;
+}
+
+.user-header .three-quarter{
+    height: 20vh;
+    width: 60vh;
+    margin: 0 0.5em;
+}
+.user-header .quarter img{
+    border-radius: 50%;
+    aspect-ratio: 1/1;
+    height: 100%;
+    width: auto;
+}
+
+.user-header h3{
+    padding: 0.5em 0.3em;
+}
+
+.user-header a{
+    padding: 0.5em;
+    font-family: 'Roboto';
+    font-size: 0.8em;
+    text-decoration: none;
+    transition: 0.5s;
+    position: relative;
+    transition: 0.3s;
+}
+
+.user-header a::before{
+    top: 80%;
+
+}
+
+/* GAME SEARCH */
+
+.search-bar{
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 1em 0;
+}
+
+.search-bar input{
+    width: 70%;
+}
+
+.search-bar input[type="submit"]{
+    width: 10%;
+    padding: 0.5em;
+}
+.search-bar a{
+    padding: 0.5em;
+    margin: 0em 1em;
+}
+
+.search-filter-container{
+    display: none;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 1em 0;
+
+}
+.search-filters{
+    display: flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+}
+
+/* RESULTS */
+
+.results{
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+    margin: 1em 0;
+    font-family: 'Roboto';
+}
+
+.results table{
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+    text-align: left;
+}
+
+.results th{
+    padding: 0.5em;
+    border: 2px solid white;
+    background-color: var(--bg2);
+}
+
+.results td{
+    padding: 0.5em;
+    border: 1px solid white;
+    border-right: 2px solid white;
+    border-left: 2px solid white;
+    background-color: var(--bg2);
+}
+
+.results a::before{
+    top: 80%;
+}
+
 
 
 

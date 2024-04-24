@@ -2,45 +2,48 @@
 
 {% block content %}
 
-<div class="login-form">
-  <form action="" method ="post" novalidate>
-  {{form.hidden_tag()}}
+<div class="centre">
+  <div class="login-form">
+    <form action="" method="post" novalidate>
+      {{form.hidden_tag()}}
 
-  <label for="username">Username</label>
-  <input type="text" name="username" id="username" required>
-  {% for error in form.username.errors %}
-  <span style="color:red">[{{ error }}]</span>
-  {% endfor %}
+      <label for="username">Username</label>
+      <input type="text" name="username" id="username" required>
+      {% for error in form.username.errors %}
+      <span style="color:red">[{{ error }}]</span>
+      {% endfor %}
 
-  <label for="email">Email</label>
-  <input type="email" name="email" id="email" required>
-  {% for error in form.email.errors %}
-  <span style="color:red">[{{ error }}]</span>
-  {% endfor %}
+      <label for="email">Email</label>
+      <input type="email" name="email" id="email" required>
+      {% for error in form.email.errors %}
+      <span style="color:red">[{{ error }}]</span>
+      {% endfor %}
 
-  <label for="password">Password</label>
-  <input type="password" name="password" id="password" required>
-  {% for error in form.password.errors %}
-  <span style="color:red">[{{ error }}]</span>
-  {% endfor %}
+      <label for="password">Password</label>
+      <input type="password" name="password" id="password" required>
+      {% for error in form.password.errors %}
+      <span style="color:red">[{{ error }}]</span>
+      {% endfor %}
 
-  <label for="password2">Confirm Password</label>
-  <input type="password" name="password2" id="password2" required>
-  {% for error in form.password2.errors %}
-  <span style="color:red">[{{ error }}]</span>
-  {% endfor %}
+      <label for="password2">Confirm Password</label>
+      <input type="password" name="password2" id="password2" required>
+      {% for error in form.password2.errors %}
+      <span style="color:red">[{{ error }}]</span>
+      {% endfor %}
 
-  <label for="code">Admin Code</label>
-  <input type="text" name="code" id="code" required>
-  {% for error in form.code.errors %}
-  <span style="color:red">[{{ error }}]</span>
-  {% endfor %}
+      <label for="code">Admin Code</label>
+      <input type="text" name="code" id="code" required>
+      {% for error in form.code.errors %}
+      <span style="color:red">[{{ error }}]</span>
+      {% endfor %}
 
 
-  <input type="submit" value="Register">
+      <input type="submit" value="Register">
 
-</form>
+    </form>
+  </div>
 </div>
+
 
 
 

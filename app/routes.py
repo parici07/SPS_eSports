@@ -2,10 +2,10 @@ from app import app, db
 from flask import render_template, flash, redirect, url_for, request
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, GameSearchForm, UserSearchForm,\
     CreateTeamForm, TeamSearchForm, PostForm, CreateTournamentForm, UploadPfpForm, TournamentSearchForm, \
-    AddWinnerForm, CommentForm, AddMatchDetailsForm
+    AddWinnerForm, CommentForm, AddMatchDetailsForm, AddMatchWinnerForm, CreatePractiseForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Games, Teams, TeamUsers, Posts, Following, Likes, Tournaments, FavouriteGames, \
-    TournamentUsers, Comments, Matches, MatchUsers
+    TournamentUsers, Comments, Matches, MatchUsers, Practises
 from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename
 import csv # now redundant, used for converting the csv file to db
@@ -27,9 +27,51 @@ def index():
         followed_users.append(user)
     print(followed_users)
 
+    # get all tournaments user is in
+    tournament_users = TournamentUsers.query.filter_by(user_id=current_user.user_id).all()
+    tournaments = []
+    for tournament_user in tournament_users:
+        tournament = Tournaments.query.filter_by(tournament_id=tournament_user.tournament_id).first()
+        tournaments.append(tournament)
+
+    # get all matches user is in
+    match_users = MatchUsers.query.filter_by(match_user=current_user.user_id).all()
+    matches = []
+    for match_user in match_users:
+        match = Matches.query.filter_by(match_id=match_user.match_id).first()
+        matches.append(match)
+
+    # order by date
+    tournaments = sorted(tournaments, key=lambda x: x.tournament_start, reverse=False)
+    matches = sorted(matches, key=lambda x: x.match_date, reverse=False)
+
+    # convert dates to readable format
+    for tournament in tournaments:
+        tournament.tournament_start = datetime.strptime(str(tournament.tournament_start), '%d-%m-%Y %H:%M:%S')
+        tournament.tournament_end = datetime.strptime(str(tournament.tournament_end), '%d-%m-%Y %H:%M:%S')
+    for match in matches:
+        match.match_date = datetime.strptime(str(match.match_date), '%d-%m-%Y %H:%M:%S')
 
 
-    return render_template('index.html', title="Home")
+    # get all teams user is in
+    team_users = TeamUsers.query.filter_by(user_id=current_user.user_id).all()
+    teams = []
+    for team_user in team_users:
+        team = Teams.query.filter_by(team_id=team_user.team_id).first()
+        if team not in teams:
+            teams.append(team)
+
+    # get all practises for each team
+    practises = []
+    for team in teams:
+        practise = Practises.query.filter_by(team_id=team.team_id).all()
+        for p in practise:
+            practises.append(p)
+
+    # sort practises by date
+    practises = sorted(practises, key=lambda x: x.practise_date, reverse=False)
+
+    return render_template('index.html', title="Home", tournaments=tournaments, matches=matches, practises=practises)
 
 
 ### LOGIN AND ASSOCIATED ROUTES ###
@@ -151,6 +193,9 @@ def user(username):
     # gets all tournaments won
     tournaments = Tournaments.query.filter_by(winner=user.user_id).all()
 
+    # gets all matches won
+    matches = Matches.query.filter_by(match_winner=user.user_id).all()
+
     # gets favourited games
     fave_id = FavouriteGames.query.filter_by(user_id=user.user_id).all()
     favourites = []
@@ -160,7 +205,17 @@ def user(username):
 
 
     posts = Posts.query.filter_by(user_id=user.user_id).order_by(Posts.post_date.desc()).all()
-    return render_template('user.html', user=user, posts=posts, username=username, is_following=is_following, mutuals=mutuals, tournaments=tournaments, favourites=favourites)
+
+    # convert post dates to readable format
+    for post in posts:
+        post.post_date = post.post_date.strftime('%d/%m/%Y %I:%M %p')
+
+    # get first part of post content
+    for post in posts:
+        if len(post.post_content) > 50:
+            post.post_content = post.post_content[:50] + '...'
+    return render_template('user.html', user=user, posts=posts, username=username, is_following=is_following,
+                           mutuals=mutuals, tournaments=tournaments, favourites=favourites, matches=matches)
 
 @app.route('/following/<username>')
 @login_required
@@ -241,9 +296,6 @@ def search():
             return render_template('search.html', title="Search", form=form)
         else:
             return render_template('results.html', games=games)
-
-    else:
-        flash('Something went wrong. Please try again.')
 
     return render_template('search.html', title="Search", form=form)
 
@@ -531,7 +583,7 @@ def create_post():
         flash('Post created successfully')
         return redirect(url_for('index'))
     else:
-        flash('Something went wrong. Please try again.')
+        print(form.errors)
 
     return render_template('create_post.html', title="Create Post", form=form)
 
@@ -638,6 +690,11 @@ def create_tournament():
             flash('Participants must be a power of 2')
             return redirect(url_for('create_tournament'))
 
+        # make sure tournament name is unique
+        if Tournaments.query.filter_by(tournament_name=tournament_name).count() > 0:
+            flash('Tournament name must be unique')
+            return redirect(url_for('create_tournament'))
+
 
         tournament = Tournaments(tournament_name=tournament_name, tournament_description=tournament_description,
                                  tournament_start=tournament_start, tournament_end=tournament_end,
@@ -726,10 +783,15 @@ def tournament(tournament_id):
         user = User.query.filter_by(user_id=participant.user_id).first()
         participants.append(user)
 
+    p_number = len(participants)
     # get all matches
     matches = Matches.query.filter_by(tournament_id=tournament_id).all()
 
-    return render_template('tournament.html', tournament=tournament, user=user, in_tournament=in_tournament, participants=participants, matches=matches)
+    # get winner
+    winner = User.query.filter_by(user_id=tournament.winner).first()
+
+    return render_template('tournament.html', tournament=tournament, user=user, in_tournament=in_tournament,
+                           participants=participants, matches=matches, winner=winner, p_number=p_number)
 
 @app.route('/join_tournament/<tournament_id>')
 @login_required
@@ -744,6 +806,7 @@ def join_tournament(tournament_id):
     # requirements
     skill_level = tournament.tournament_skill_level
     min_grade = tournament.tournament_min_grade
+    participants = tournament.participants
 
 
     in_tournament = TournamentUsers.query.filter_by(tournament_id=tournament_id, user_id=user.user_id).count()
@@ -760,6 +823,9 @@ def join_tournament(tournament_id):
             return redirect(url_for('tournament', tournament_id=tournament_id))
         if int(user.grade) < int(min_grade):
             flash('You do not meet the grade requirements for this tournament')
+            return redirect(url_for('tournament', tournament_id=tournament_id))
+        if TournamentUsers.query.filter_by(tournament_id=tournament_id).count() >= participants:
+            flash('This tournament is full')
             return redirect(url_for('tournament', tournament_id=tournament_id))
 
         tournament_user = TournamentUsers(tournament_id=tournament_id, user_id=user.user_id)
@@ -809,6 +875,8 @@ def match(match_id):
     tournament = Tournaments.query.filter_by(tournament_id=match.tournament_id).first()
     user = current_user
 
+    winner = User.query.filter_by(user_id=match.match_winner).first()
+
     # get players in match
     match_users = MatchUsers.query.filter_by(match_id=match_id).all()
     players = []
@@ -817,7 +885,7 @@ def match(match_id):
         players.append(player)
 
 
-    return render_template('match.html', match=match, tournament=tournament, user=user, match_users=match_users, players=players)
+    return render_template('match.html', match=match, tournament=tournament, user=user, match_users=match_users, players=players, winner=winner)
 
 @app.route('/add_match_details/<match_id>', methods=['GET', 'POST'])
 @login_required
@@ -838,8 +906,6 @@ def add_match_details(match_id):
 
     form.player1.choices = choices
     form.player2.choices = choices
-    print(form.player1.choices)
-    print(form.player2.choices)
 
     if current_user.role != 'Staff':
         flash('You are not authorised to add match members.')
@@ -857,7 +923,22 @@ def add_match_details(match_id):
             flash('Players cannot be the same')
             return redirect(url_for('add_match_details', match_id=match_id))
 
-        ## ADD IF PLAYER IS ALREADY IN MATCH ##
+        ## CHECK IF MATCH IS OVER ##
+        datetime = dt.datetime.now()
+        if match.match_date < datetime:
+            flash('Match has already occured')
+            return redirect(url_for('match', match_id=match_id))
+
+        ## ADD IF PLAYER IS ALREADY IN MATCH FOR THAT ROUND ##
+        # get all matches for this tournament and this round
+        current_round = match.round
+        current_round_matches = Matches.query.filter_by(tournament_id=tournament.tournament_id, round=current_round).all()
+        for current_round_match in current_round_matches:
+            current_round_match_users = MatchUsers.query.filter_by(match_id=current_round_match.match_id).all()
+            for current_round_match_user in current_round_match_users:
+                if current_round_match_user.match_user == player1_id or current_round_match_user.match_user == player2_id:
+                    flash('Player already in a match for this round')
+                    return redirect(url_for('add_match_details', match_id=match_id))
 
         if player1 == None or player2 == None:
             flash('One or more players not found')
@@ -866,13 +947,11 @@ def add_match_details(match_id):
         match_user1 = MatchUsers(match_id=match_id, match_user=player1_id)
         match_user2 = MatchUsers(match_id=match_id, match_user=player2_id)
         match.match_date = match_date
-        print(match.match_date)
 
 
 
         db.session.add(match_user1)
         db.session.add(match_user2)
-        db.session.add(match.match_date)
         db.session.commit()
         flash('Players added to match')
         return redirect(url_for('match', match_id=match_id))
@@ -882,7 +961,158 @@ def add_match_details(match_id):
 
     return render_template('add_match_details.html', title="Add Match Members", form=form, choices=choices, match=match)
 
+@app.route('/add_match_winner/<match_id>', methods=['GET', 'POST'])
+@login_required
+def add_match_winner(match_id):
+    form = AddMatchWinnerForm()
+    match = Matches.query.filter_by(match_id=match_id).first_or_404()
+    match_users = MatchUsers.query.filter_by(match_id=match_id).all()
+    user = current_user
+    datetime = dt.datetime.now()
+
+    print(match)
+
+    choices = []
+    for match_user in match_users:
+        player = User.query.filter_by(user_id=match_user.match_user).first()
+        choices.append((player.user_id, player.username))
+        
+    form.winner.choices = choices
+
+    if user.role != 'Staff':
+        flash('You are not authorised to add match winners.')
+        return redirect(url_for('index'))
+
+    if match.match_date > datetime:
+        flash('Match has not occured yet')
+        return redirect(url_for('match', match_id=match_id))
+
+    if MatchUsers.query.filter_by(match_id=match_id).count() == 0:
+        flash('No players in match')
+        return redirect(url_for('match', match_id=match_id))
+
+    if match.match_winner:
+        flash('Match already has a winner')
+        return redirect(url_for('match', match_id=match_id))
+
+    if form.validate_on_submit():
+        winner = form.winner.data
+        match.match_winner = int(winner)
+        db.session.commit()
+        flash('Winner added successfully')
+
+        # get final round for tournament and check if that was the final round
+        final_round = Matches.query.filter_by(tournament_id=match.tournament_id).order_by(Matches.round.desc()).first()
+        if match.round == final_round.round:
+            tournament = Tournaments.query.filter_by(tournament_id=match.tournament_id).first()
+            tournament.winner = winner
+            db.session.commit()
+            flash('Tournament winner added successfully')
+            return redirect(url_for('tournament', tournament_id=match.tournament_id))
+
+        # remove loser from tournament_users
+        for match_user in match_users:
+            if match_user.match_user != int(winner):
+                loser = match_user.match_user
+                loser_user = TournamentUsers.query.filter_by(user_id=loser, tournament_id=match.tournament_id).first()
+                db.session.delete(loser_user)
+                db.session.commit()
+                flash('Loser removed from tournament')
+
+
+        return redirect(url_for('match', match_id=match_id))
+    else:
+        flash('Something went wrong. Please try again.')
+        print(form.errors)
+    return render_template('add_match_winner.html', title="Add Match Winner", form=form, match=match, choices=choices)
+
+
+### SPONSOR / STAFF ANALYTICS ###
+
+@app.route('/match_leaderboard', methods=['GET', 'POST'])
+@login_required
+def match_leaderboard():
+    # get all students
+    users = User.query.filter_by(role='Student').all()
+
+    # get each user match wins
+    leaderboard = []
+
+
+    for user in users:
+        matches_won = MatchUsers.query.filter_by(match_user=user.user_id).count()
+        if matches_won > 0:
+            leaderboard.append((user, matches_won))
+
+
+
+    # sort leaderboard by matches won
+    leaderboard = sorted(leaderboard, key=lambda x: x[1], reverse=True)
+
+    return render_template('match_leaderboard.html', title="Match Leaderboard", leaderboard=leaderboard)
+
+
+@app.route('/tournament_leaderboard', methods=['GET', 'POST'])
+@login_required
+def tournament_leaderboard():
+    # get all students
+    users = User.query.filter_by(role='Student').all()
+
+    # get each user match wins
+    leaderboard = []
+
+    for user in users:
+        tournaments_won = Tournaments.query.filter_by(winner=user.user_id).count()
+        if tournaments_won > 0:
+            leaderboard.append((user, tournaments_won))
+
+    # sort leaderboard by matches won
+    leaderboard = sorted(leaderboard, key=lambda x: x[1], reverse=True)
+
+    return render_template('tournament_leaderboard.html', title="Match Leaderboard", leaderboard=leaderboard)
+
+
+
 ### PRACTISE HANDLING ###
+
+@app.route('/create_practise/<team_id>', methods=['GET', 'POST'])
+@login_required
+def create_practise(team_id):
+    team = Teams.query.filter_by(team_id=team_id).first_or_404()
+    form = CreatePractiseForm()
+    current_time = dt.datetime.now()
+
+    #check if user is in team
+    if TeamUsers.query.filter_by(team_id=team_id, user_id=current_user.user_id).count() == 0:
+        flash('You are not in this team!')
+        return redirect(url_for('team', team_id=team_id))
+
+    print('team: ' + str(team))
+
+    if form.validate_on_submit():
+        print('Form validated')
+        practise_name = form.practise_name.data
+        practise_description = form.practise_description.data
+        practise_date = form.practise_date.data
+        practise_time = form.practise_time.data
+
+        form_date = dt.datetime.combine(practise_date, practise_time)
+        if form_date < current_time:
+            flash('Practise date and time must be in the future')
+            return redirect(url_for('create_practise', team_id=team_id))
+
+        practise = Practises(practise_name=practise_name, practise_description=practise_description, practise_date=practise_date, practise_time=practise_time, team_id=team_id)
+
+        db.session.add(practise)
+        db.session.commit()
+        flash('Practise created successfully')
+        return redirect(url_for('team', team_id=team_id))
+    else:
+        flash('Something went wrong. Please try again.')
+        print(form.errors)
+
+    return render_template('create_practise.html', title="Create Practise", team=team, form=form, team_id=team_id)
+
 
 ### DATA CHECKING ###
 @app.route('/check_data')
@@ -911,4 +1141,6 @@ def test_formulae():
         participants = participants / 2
 
     return redirect(url_for('index'))
+
+
 
