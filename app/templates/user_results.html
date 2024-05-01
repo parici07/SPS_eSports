@@ -2,16 +2,36 @@
 
 {% block content %}
 
-<h1>Results</h1>
 
-{% if users %}
-    <ul>
-        {% for user in users %}
-            <li><a href="{{ url_for('user', username=user.username) }}">{{ user.username }}</a></li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No users found</p>
-{% endif %}
+<div class="centre">
+
+    <div class="results">
+        <p>Found {{users|length}} users</p>
+        <a href="{{ url_for('user_search') }}"><i class="fa-solid fa-arrow-left"></i> Back to search</a>
+        {% if users %}
+        <table>
+            <tr>
+                <th>Username</th>
+                <th>Grade</th>
+                <th>Skill Level</th>
+            </tr>
+            {% for user in users %}
+            <tr>
+                <td><a href="{{ url_for('user', username=user.username) }}"><i
+                        class="fa-solid fa-circle-chevron-right"></i>  {{ user.username }}</a></td>
+                <td>{{ user.grade }}</td>
+                <td>{{ user.skill_level }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p>No users found</p>
+        {% endif %}
+
+    </div>
+</div>
+
+
+
 
 {% endblock %}

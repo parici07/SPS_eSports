@@ -73,6 +73,10 @@ body{
     flex: 75%;
 }
 
+.full{
+    flex: 100%;
+}
+
 
 /* HEADER ELEMENTS */
 
@@ -208,6 +212,7 @@ a{
     transition: 0.5s;
     padding: 0.5em 0;
     position: relative;
+    font-family: 'Roboto';
 }
 
 a:hover{
@@ -273,7 +278,7 @@ input[type="text"]{
     color: white;
     font-family: 'Roboto';
     font-size: 1em;
-    width: 80vh;
+
 }
 
 input[type="number"]{
@@ -287,6 +292,12 @@ input[type="number"]{
     font-family: 'Roboto';
     font-size: 1em;
     width: 80vh;
+}
+
+label{
+    font-family: 'Roboto';
+    font-size: 1em;
+
 }
 /* LOGIN FORM */
 .centre{
@@ -509,6 +520,11 @@ input[type="number"]{
     margin: 0.5em 0;
 }
 
+.post a::before{
+    top: 80%;
+
+}
+
 .user-box{
     display: flex;
     flex-flow: column wrap;
@@ -519,6 +535,7 @@ input[type="number"]{
     margin: 1em;
     font-family: 'Roboto';
     width: 90%;
+    height: auto;
     background: rgba(255,255,255,0.05);
 }
 
@@ -528,7 +545,7 @@ input[type="number"]{
     align-items: center;
     padding: 0.5em;
     margin: 0.5em 0;
-    height: 20vh;
+    height: 100%;
 }
 .user-header .quarter{
     height: 20vh;
@@ -540,6 +557,8 @@ input[type="number"]{
     width: 60vh;
     margin: 0 0.5em;
 }
+
+
 .user-header .quarter img{
     border-radius: 50%;
     aspect-ratio: 1/1;
@@ -563,7 +582,50 @@ input[type="number"]{
 
 .user-header a::before{
     top: 80%;
+}
 
+.user-header p{
+    font-size 0.8em;
+    padding: 0 0.5em;
+}
+
+.info-table{
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 1em 0;
+}
+
+.info-table table{
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+    text-align: left;
+}
+
+.info-table th{
+    padding: 0.5em;
+    border: 2px solid white;
+    background-color: var(--bg2);
+}
+
+.info-table td{
+    padding: 0.5em;
+    border: 1px solid white;
+    border-right: 2px solid white;
+    border-left: 2px solid white;
+    background-color: var(--bg2);
+}
+
+.info-table.firstcolumn tr > td:first-child{
+    width: 30%;
+    background-color: var(--bg);
+}
+
+.info-table.other th{
+    background-color: var(--bg);
 }
 
 /* GAME SEARCH */
@@ -580,6 +642,8 @@ input[type="number"]{
 .search-bar input{
     width: 70%;
 }
+
+
 
 .search-bar input[type="submit"]{
     width: 10%;
@@ -644,6 +708,91 @@ input[type="number"]{
     top: 80%;
 }
 
+/* GAME CONTAINER */
+
+.game-container{
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    justify-content: center;
+    width: 70%;
+    margin: 1em 0;
+    font-family: 'Roboto';
+    background-color: var(--lightbg);
+    padding: 1em;
+    border-radius: 0.5em;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
+}
+
+.game-container table{
+    width: 80%;
+}
+
+/* CREATE FORM */
+
+.create-form{
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    justify-content: center;
+    width: 70%;
+    margin: 1em 0;
+    font-family: 'Roboto';
+    background-color: var(--lightbg);
+    padding: 1em;
+    border-radius: 0.5em;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
+}
+
+.create-form form{
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    padding: 1em;
+}
+
+.create-form textarea{
+    padding: 0.5em;
+    margin: 0.5em;
+    border: 2px solid white;
+    border-radius: 5px;
+    background-color: var(--bg);
+    color: white;
+    font-family: 'Roboto';
+    font-size: 1em;
+    resize: none;
+    width: 80vh;
+    height: 20vh;
+}
+
+/* GENERIC CONTAINER */
+.gen-container{
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    justify-content: center;
+    width: 70%;
+    margin: 1em 0;
+    font-family: 'Roboto';
+    background-color: var(--lightbg);
+    padding: 1em;
+    border-radius: 0.5em;
+    box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
+}
+
+.highlight-box{
+    display: flex;
+    flex-flow: column wrap;
+    align-items: center;
+    justify-content: center;
+    width: 70%;
+    margin: 1em 0;
+    font-family: 'Roboto';
+    background-color: var(--lightbg);
+    padding: 1em;
+    border-radius: 0.5em;
+    border: 2px solid white;
+}
 
 
 

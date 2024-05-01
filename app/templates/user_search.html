@@ -2,12 +2,19 @@
 
 {% block content %}
 
-<form action="{{ url_for('user_search') }}" method="post">
-    {{ form.hidden_tag() }}
 
-    <input type="text" name="username" id="username" placeholder="Search for users...">
+    <form action="{{ url_for('user_search') }}" method="post">
+        {{ form.hidden_tag() }}
+        <div class="search-bar">
+            <input type="text" name="username" id="username" placeholder="Search for users...">
+            <input type="submit" value="Search">
+        </div>
 
-    <input type="submit" value="Search">
-</form>
+
+
+
+    </form>
+
+
 
 {% endblock %}

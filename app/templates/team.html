@@ -2,21 +2,50 @@
 
 {% block content %}
 
-<h1>{{team.team_name}}</h1>
-{% if my_team %}
-    <a href="{{url_for('leave_team', team_id=team.team_id)}}">Leave Team</a>
-{% else %}
-    <a href="{{url_for('join_team', team_id=team.team_id)}}">Join Team</a>
-{% endif %}
+<div class="centre">
+    <div class="gen-container">
+        <h1>{{team.team_name}}</h1>
+        {% if my_team %}
+        <a href="{{url_for('leave_team', team_id=team.team_id)}}">Leave Team <i
+                class="fa-solid fa-right-from-bracket"></i></a>
+        {% else %}
+        <a href="{{url_for('join_team', team_id=team.team_id)}}"><i class="fa-solid fa-right-to-bracket"></i>   Join Team</a>
+        {% endif %}
 
-<p>{{team.team_description}}</p>
-<p>Size Limit: {{team.limit}}</p>
-<p>Availability: {{team.availability}}</p>
-<p>Skill Level: {{team.skill_level}}</p>
+        {% if my_team %}
+        <a href="{{url_for('create_practise', team_id=team.team_id)}}"><i class="fa-regular fa-square-plus"></i>  Add Practise</a>
+        {% endif %}
 
-{% if my_team %}
-    <a href="{{url_for('create_practise', team_id=team.team_id)}}">Add Practise</a>
-{% endif %}
+        <div class="highlight-box">
+            <p>{{team.team_description}}</p>
+        </div>
+        <div class="info-table firstcolumn">
+            <table>
+                <tr>
+                    <td>Size Limit</td>
+                    <td>{{team.limit}}</td>
+                </tr>
+
+                <tr>
+                    <td>Availability</td>
+                    <td>{{team.availability}}</td>
+                </tr>
+
+                <tr>
+                    <td>Skill Level</td>
+                    <td>{{team.skill_level}}</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
 
 <h2>Team Members</h2>
 {% for user in users %}

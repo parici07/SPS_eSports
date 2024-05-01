@@ -12,5 +12,9 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = 'login'
 
+@app.template_filter('format_date')
+def format_date(date):
+    return date.strftime('%d/%m/%Y')
+
 from app import routes, models
 

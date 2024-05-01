@@ -1,46 +1,28 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<h1>Search Teams</h1>
-
-<a href="{{url_for('create_team')}}">Create a Team</a>
+<div class="centre">
+    <a href="{{url_for('create_team')}}"><i class="fa-regular fa-square-plus"></i>   Create a Team</a>
+</div>
 
 <form action="{{ url_for('team_search') }}" method="post">
     {{ form.hidden_tag() }}
 
-    <label for="team_name">Team Name:</label>
-    <input type="text" name="team_name" id="team_name">
+    <div class="search-bar">
+        <input type="text" name="team_name" id="team_name" placeholder="Search for a team...">
+        <input type="submit" value="Search">
+        <a href="javascript:showFilters()"><i class="fa-solid fa-filter"></i></a>
+    </div>
+    <div class="search-filter-container">
+        {{form.skill_level}}
+        {{form.availability}}
 
-    <select name="skill_level" id="skill_level">
-        <option value="Any Skill Level">Any Skill Level</option>
-        <option value="Beginner">Beginner</option>
-        <option value="Intermediate">Intermediate</option>
-        <option value="Advanced">Advanced</option>
-        <option value="Expert">Expert</option>
-        <option value="Unsure">Unsure</option>
-    </select>
+        <input type="number" name="limit" id="limit" placeholder="Minimum Team Size" min="2" max="20">
+    </div>
 
-    <select name="availability" id="availability">
-        <option value="Any Availability">Any Availability</option>
-        <option value="Monday">Monday</option>
-        <option value="Tuesday">Tuesday</option>
-        <option value="Wednesday">Wednesday</option>
-        <option value="Thursday">Thursday</option>
-        <option value="Friday">Friday</option>
-        <option value="Saturday">Saturday</option>
-        <option value="Sunday">Sunday</option>
-        <option value="Weekdays">Weekdays</option>
-        <option value="Weekends">Weekends</option>
-        <option value="Anytime">Anytime</option>
-        <option value="After School">After School</option>
-        <option value="Before School">Before School</option>
-        <option value="Unsure">Unsure</option>
-    </select>
 
-    <input type="number" name="limit" id="limit" placeholder="Minimum Team Size" min="2" max="20">
 
-    <input type="submit" value="Search">
+
 
 </form>
 

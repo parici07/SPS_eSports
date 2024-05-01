@@ -14,6 +14,7 @@ from datetime import datetime
 import os
 import math
 
+
 @app.route('/')
 @app.route('/index')
 @login_required
@@ -26,6 +27,20 @@ def index():
         user = User.query.filter_by(user_id=user.following_id).first()
         followed_users.append(user)
     print(followed_users)
+
+    # get all posts from followed users
+    posts = []
+    for user in followed_users:
+        user_posts = Posts.query.filter_by(user_id=user.user_id).all()
+        for post in user_posts:
+            print('Post: ' + str(post))
+            print(post.post_title)
+            print(user.username)
+            posts.append((post, user.username))
+    print(posts)
+
+
+
 
     # get all tournaments user is in
     tournament_users = TournamentUsers.query.filter_by(user_id=current_user.user_id).all()
@@ -45,14 +60,6 @@ def index():
     tournaments = sorted(tournaments, key=lambda x: x.tournament_start, reverse=False)
     matches = sorted(matches, key=lambda x: x.match_date, reverse=False)
 
-    # convert dates to readable format
-    for tournament in tournaments:
-        tournament.tournament_start = datetime.strptime(str(tournament.tournament_start), '%d-%m-%Y %H:%M:%S')
-        tournament.tournament_end = datetime.strptime(str(tournament.tournament_end), '%d-%m-%Y %H:%M:%S')
-    for match in matches:
-        match.match_date = datetime.strptime(str(match.match_date), '%d-%m-%Y %H:%M:%S')
-
-
     # get all teams user is in
     team_users = TeamUsers.query.filter_by(user_id=current_user.user_id).all()
     teams = []
@@ -71,7 +78,7 @@ def index():
     # sort practises by date
     practises = sorted(practises, key=lambda x: x.practise_date, reverse=False)
 
-    return render_template('index.html', title="Home", tournaments=tournaments, matches=matches, practises=practises)
+    return render_template('index.html', title="Home", tournaments=tournaments, matches=matches, practises=practises, posts=posts)
 
 
 ### LOGIN AND ASSOCIATED ROUTES ###
@@ -140,6 +147,15 @@ def register():
 @login_required
 def edit_profile():
     form = EditProfileForm()
+    # set default form values as current user values
+    form.user_bio.data = current_user.user_bio
+    form.pronouns.data = current_user.pronouns
+    form.skill_level.data = current_user.skill_level
+    form.grade.data = current_user.grade
+    form.availability.data = current_user.availability
+    user = current_user
+
+
     if form.validate_on_submit():
         current_user.user_bio = form.user_bio.data
         current_user.pronouns = form.pronouns.data
@@ -148,11 +164,11 @@ def edit_profile():
         current_user.availability = form.availability.data
         db.session.commit()
         flash('Your changes have been saved.')
-        return redirect(url_for('index'))
+        return redirect(url_for('user', username=current_user.username))
     else:
-        flash('Something went wrong. Please try again.')
+        print(form.errors)
 
-    return render_template('edit_profile.html', title="Edit Profile", form=form)
+    return render_template('edit_profile.html', title="Edit Profile", form=form, user=user)
 
 @app.route('/upload_pfp', methods=['GET', 'POST'])
 @login_required
@@ -371,8 +387,7 @@ def user_search():
             return render_template('search_users.html', title="Search Users", form=form)
         else:
             return render_template('user_results.html', users=users)
-    else:
-        flash('Something went wrong. Please try again.')
+
     return render_template('user_search.html', title="Search Users", form=form)
 
 @app.route('/follow/<username>', methods=['GET', 'POST'])
@@ -452,7 +467,6 @@ def create_team():
         return redirect(url_for('index'))
     else:
         print(form.errors)
-        flash('Something went wrong. Please try again.')
 
     return render_template('create_team.html', title="Create Team", form=form)
 
@@ -491,9 +505,15 @@ def team_search():
             flash('No results found. Please try again.')
             return render_template('search_teams.html', title="Search Teams", form=form)
         else:
-            return render_template('team_results.html', teams=teams)
+            final_teams = []
+            for team in teams:
+                member_number = TeamUsers.query.filter_by(team_id=team.team_id).count()
+                capacity = team.limit
+                final_teams.append((team, member_number, capacity))
+
+
+            return render_template('team_results.html', teams=teams, final_teams=final_teams, title="Team Results")
     else:
-        flash('Something went wrong. Please try again.')
         print(form.errors)
     return render_template('team_search.html', title="Search Teams", form=form)
 
@@ -670,6 +690,9 @@ def post_comment(post_id):
 def create_tournament():
     user = current_user
     form = CreateTournamentForm()
+    print(request.form)
+
+
     if user.role != 'Staff':
         flash('You are not authorised to create a tournament.')
         return redirect(url_for('index'))
@@ -718,6 +741,9 @@ def create_tournament():
     else:
         flash('Something went wrong. Please try again.')
         print(form.errors)
+        print(form.data)
+
+
 
     return render_template('create_tournament.html', title="Create Tournament", form=form)
 
@@ -764,9 +790,13 @@ def tournament_search():
                     filtered_tournaments.append(tournament)
             tournaments = filtered_tournaments
 
-        return render_template('tournament_results.html', tournaments=tournaments)
+        for tournament in tournaments:
+            tournament.tournament_start = datetime.strftime(tournament.tournament_start, '%d-%m-%Y')
+            tournament.tournament_end = datetime.strftime(tournament.tournament_end, '%d-%m-%Y')
+            print(tournament.tournament_start, tournament.tournament_end)
+
+        return render_template('tournament_results.html', title="Tournament Results", tournaments=tournaments)
     else:
-        flash('Something went wrong. Please try again.')
         print(form.errors)
 
     return render_template('tournament_search.html', title="Search Tournaments", form=form, role=role)
@@ -821,9 +851,13 @@ def join_tournament(tournament_id):
         if user.skill_level != skill_level and skill_level != 'Any Skill Level':
             flash('You do not meet the skill level requirements for this tournament')
             return redirect(url_for('tournament', tournament_id=tournament_id))
-        if int(user.grade) < int(min_grade):
-            flash('You do not meet the grade requirements for this tournament')
-            return redirect(url_for('tournament', tournament_id=tournament_id))
+        if int(min_grade) != 3:
+            if int(user.grade) is None:
+                flash("You haven't set your grade in your profile!")
+                return redirect(url_for('edit_profile'))
+            if int(user.grade) < int(min_grade):
+                flash('You do not meet the grade requirements for this tournament')
+                return redirect(url_for('tournament', tournament_id=tournament_id))
         if TournamentUsers.query.filter_by(tournament_id=tournament_id).count() >= participants:
             flash('This tournament is full')
             return redirect(url_for('tournament', tournament_id=tournament_id))
@@ -915,6 +949,10 @@ def add_match_details(match_id):
         player1_id = form.player1.data
         player2_id = form.player2.data
         match_date = form.match_date.data
+        print(form.data)
+        print(form.errors)
+        print(match_date)
+
 
         player1 = User.query.filter_by(user_id=player1_id).first()
         player2 = User.query.filter_by(user_id=player2_id).first()
@@ -923,11 +961,14 @@ def add_match_details(match_id):
             flash('Players cannot be the same')
             return redirect(url_for('add_match_details', match_id=match_id))
 
+
         ## CHECK IF MATCH IS OVER ##
-        datetime = dt.datetime.now()
-        if match.match_date < datetime:
-            flash('Match has already occured')
-            return redirect(url_for('match', match_id=match_id))
+
+        current_time = dt.datetime.now()
+        if match.match_date is not None:
+            if match.match_date < current_time:
+                flash('Match has already occured')
+                return redirect(url_for('match', match_id=match_id))
 
         ## ADD IF PLAYER IS ALREADY IN MATCH FOR THAT ROUND ##
         # get all matches for this tournament and this round

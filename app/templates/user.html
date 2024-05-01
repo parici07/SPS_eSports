@@ -14,20 +14,132 @@
                         {% if user.pfp %}
                         <img src="{{url_for('static', filename='pfps/' + user.pfp)}}"
                              alt="profile picture">
+                        {% else %}
+                        <img src="{{url_for('static', filename='pfps/default.jpg')}}"
+                             alt="profile picture">
                         {% endif %}
                     </div>
                     <div class="three-quarter">
                         <h3>{{user.username}}</h3>
+                        {% if user.role == "Staff" %}
+                        <p><i class="fa-solid fa-chalkboard-user"></i>  Staff member</p>
+                        {% endif %}
+
+                        {% if user.role == "Sponsor" %}
+                        <p><i class="fa-solid fa-magnifying-glass-dollar"></i>   Official sponsor</p>
+                        {% endif %}
+
+                        {% if user.pronouns %}
+                        <p>{{user.pronouns}}</p>
+                        {% endif %}
                         <a href="{{url_for('following', username=user.username)}}">Following</a>
                         <a href="{{url_for('followers', username=user.username)}}">Followers</a>
+                        <br>
+
+                        {% if current_user.username == user.username %}
+                        <a href="{{url_for('edit_profile')}}"><i class="fa-solid fa-pen"></i>  Edit Profile</a>
+                        {% else %}
+                            {% if mutuals %}
+                            <h3>Mutuals</h3>
+                            {% endif %}
+
+                            {% if is_following %}
+                            <a href="{{url_for('unfollow', username=username)}}"><i class="fa-solid fa-user-minus"></i>  Unfollow</a>
+                            {% else %}
+                            <a href="{{url_for('follow', username=username)}}"><i class="fa-solid fa-user-plus"></i>  Follow</a>
+                            {% endif %}
+                        {% endif %}
+
                     </div>
 
 
 
                 </div>
+
+            </div>
+            <div class="user-header">
+                <div class="row">
+                    <p>{{user.user_bio}}</p>
+                </div>
+                <div class="info-table firstcolumn">
+                    <table>
+                        <tr>
+                            <td>Grade</td>
+                            <td>{{user.grade}}</td>
+                        </tr>
+                        <tr>
+                            <td>Role</td>
+                            <td>{{user.role}}</td>
+                        </tr>
+                        <tr>
+                            <td>Availability</td>
+                            <td>{{user.availability}}</td>
+                        </tr>
+                        <tr>
+                            <td>Skill Level</td>
+                            <td>{{user.skill_level}}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                {% if favourites %}
+                <div class="info-table other">
+
+                    <h3>Favourite Games</h3>
+                    <table>
+                        <tr>
+                            <th>Game</th>
+                            <th>Platform</th>
+                        </tr>
+
+                        {% for favourite in favourites %}
+                        <tr>
+                            <td>{{favourite.game_title}}</td>
+                            <td>{{favourite.platform}}</td>
+                        </tr>
+                        {% endfor %}
+
+                    </table>
+
+                </div>
+                {% endif %}
+
+                {% if tournaments %}
+                <div class="info-table other">
+                    <h3>Tournaments Won</h3>
+                    <table>
+                        <tr>
+                            <th>Tournament</th>
+                        </tr>
+                        {% for tournament in tournaments %}
+                        <tr>
+                            <td>{{tournament.tournament_name}}</td>
+                        </tr>
+                        {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if matches %}
+                <div class="info-table other">
+                    <h3>Matches Won</h3>
+                    <table>
+                        <tr>
+                            <th>Match</th>
+                            <th>Tournament</th>
+                        </tr>
+                        {% for match in matches %}
+                        <tr>
+                            <td>Match {{match.round_match}}, Round {{match.round}}</td>
+                            <td><a href="{{url_for('tournament', tournament_id=match.tournament_id)}}">View Tournament</a></td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
+
     <div class="half">
         <div class="user-posts">
             <h3>Posts</h3>
@@ -43,60 +155,8 @@
     </div>
 
 </div>
-<!-- use this later when i have fontawesome
-{% if user.role == "Staff" %}
-    <h3>Staff</h3>
-{% endif %}
-
-{% if user.role == "Sponsor" %}
-    <h3>Sponsor</h3>
-{% endif %}-->
 
 
-
-{% if current_user.username == user.username %}
-    <a href="{{url_for('edit_profile')}}">Edit Profile</a>
-{% endif %}
-
-<br>
-
-
-{% if current_user.username != user.username %}
-    {% if mutuals %}
-        <h3>Mutuals</h3>
-    {% endif %}
-
-    {% if is_following %}
-        <a href="{{url_for('unfollow', username=username)}}">Unfollow</a>
-    {% else %}
-        <a href="{{url_for('follow', username=username)}}">Follow</a>
-    {% endif %}
-{% endif %}
-
-<h4>{{user.pronouns}}</h4>
-<h3>About Me: {{user.user_bio}}</h3>
-<h3>Grade: {{user.grade}}</h3>
-<h3>Role: {{user.role}}</h3>
-<h3>Availability: {{user.availability}}</h3>
-<h3>Skill Level: {{user.skill_level}}</h3>
-
-<h3>Favourite Games</h3>
-{% for favourite in favourites %}
-    <li>{{favourite.game_title}}</li>
-{% endfor %}
-
-<h3>Tournaments Won</h3>
-{% for tournament in tournaments %}
-    <hr>
-    <h4>{{tournament.tournament_name}}</h4>
-{% endfor %}
-
-<h3>Matches Won</h3>
-{% for match in matches %}
-<hr>
-<h4>Match {{match.round_match}}, Round {{match.round}}</h4>
-<a href="{{url_for('tournament', tournament_id=match.tournament_id)}}">View Tournament</a>
-{% endfor %}
 
 
 

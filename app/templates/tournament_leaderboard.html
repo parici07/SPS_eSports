@@ -2,34 +2,48 @@
 
 {% block content %}
 
-<h1>Tournament Leaderboard</h1>
+<div class="centre">
+  <div class="results">
+    <h1>Tournament Leaderboard</h1>
+    <table>
+      <tr>
+        <th>Rank</th>
+        <th>Username</th>
+        <th>Wins</th>
+      </tr>
+      {% set count = namespace(c=0) %}
+      {% if leaderboard == [] %}
+        <tr>
+            <td colspan="3" style="text-align: center;">
+            No data
+            </td>
+        </tr>
+      {% endif %}
+      {% for entry in leaderboard %}
+      {% set count.c = count.c + 1 %}
 
-<table>
-  <tr>
-    <th>Rank</th>
-    <th>Username</th>
-    <th>Wins</th>
-  </tr>
-  {% set count = namespace(c=0) %}
-  {% for entry in leaderboard %}
-  {% set count.c = count.c + 1 %}
 
-  <tr>
-    <td>
-      {{count.c}}
+      <tr>
+        <td>
+          {{count.c}}
 
-    </td>
-    <td>
-      {{entry[0].username}}
-    </td>
-    <td>
-      {{entry[1]}}
-    </td>
+        </td>
+        <td>
+          {{entry[0].username}}
+        </td>
+        <td>
+          {{entry[1]}}
+        </td>
 
-  </tr>
+      </tr>
 
-  {% endfor %}
+      {% endfor %}
 
-</table>
+    </table>
+  </div>
+</div>
+
+
+
 
 {% endblock %}
