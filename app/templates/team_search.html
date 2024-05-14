@@ -9,7 +9,7 @@
     {{ form.hidden_tag() }}
 
     <div class="search-bar">
-        <input type="text" name="team_name" id="team_name" placeholder="Search for a team...">
+        <input type="text" name="team_name" id="team_name" placeholder="Search for a team, or filter all teams">
         <input type="submit" value="Search">
         <a href="javascript:showFilters()"><i class="fa-solid fa-filter"></i></a>
     </div>
@@ -25,6 +25,27 @@
 
 
 </form>
+
+<div class="centre">
+    <div class="gen-container">
+        <h1>My Teams</h1>
+        <div class="results">
+            <table>
+                <tr>
+                    <th>Team Name</th>
+                </tr>
+
+                {% for team in teams %}
+                <tr>
+                    <td><a href="{{url_for('team', team_id=team.team_id)}}"><i class="fa-solid fa-circle-chevron-right"></i> {{ team.team_name }}</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+
+    </div>
+</div>
 
 
 {% endblock %}

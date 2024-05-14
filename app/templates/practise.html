@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="centre">
+    <div class="gen-container">
+        <h1>{{practise.practise_name}}</h1>
+        <p>{{practise.practise_description}}</p>
+        <p>{{practise.practise_date|format_date}} | {{practise.practise_time|format_time}}</p>
+
+        <a href="{{url_for('team', team_id=team.team_id)}}"><i
+                class="fa-solid fa-circle-chevron-right"></i>  Go to Team</a>
+
+        {% if past_practise %}
+        <p>This practise is over!</p>
+        {% else %}
+        <p>This practise is in {{time_to}}</p>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

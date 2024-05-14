@@ -38,19 +38,26 @@
             </table>
         </div>
 
+        <div class="info-table lineup">
+            <table>
+                <tr>
+                    <th>Team Members</th>
+                    <th>Grade</th>
+                </tr>
+
+                {% for user in users %}
+                <tr>
+                    <td><a href="{{ url_for('user', username=user.username) }}"><i
+                            class="fa-solid fa-circle-chevron-right"></i>   {{ user.username }}</a></td>
+                    <td>{{ user.grade }}</td>
+                </tr>
+                {% endfor %}
+
+            </table>
+        </div>
+
     </div>
 </div>
-
-
-
-
-
-
-
-<h2>Team Members</h2>
-{% for user in users %}
-    <p><a href="{{ url_for('user', username=user.username) }}">{{ user.username }}</a></p>
-{% endfor %}
 
 {% endblock %}
 

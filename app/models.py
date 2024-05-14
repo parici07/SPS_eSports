@@ -15,7 +15,7 @@ class User(UserMixin, db.Model):
     pronouns = db.Column(db.String(64), nullable=True)
     skill_level = db.Column(db.String(64), default='Unsure')
     role = db.Column(db.String(64))
-    grade = db.Column(db.String(64), nullable=True)
+    grade = db.Column(db.String(64), nullable=True, default='Unsure')
     availability = db.Column(db.String(140), default='Unsure')
 
     teams = db.relationship('Teams', back_populates='user')
@@ -31,6 +31,9 @@ class User(UserMixin, db.Model):
 
     following = db.relationship('Following', backref='user', foreign_keys='Following.user_id')
     followed = db.relationship('Following', foreign_keys='Following.following_id')
+
+    sponsor = db.relationship('SponsoredUsers', backref='user', foreign_keys='SponsoredUsers.sponsor_id')
+    sponsored = db.relationship('SponsoredUsers', foreign_keys='SponsoredUsers.sponsored_id')
 
     def get_id(self):
         return str(self.user_id)
@@ -278,6 +281,18 @@ class Practises(db.Model):
 
     def get_id(self):
         return str(self.practise_id)
+
+class SponsoredUsers(db.Model):
+    sponsored_user_id = db.Column(db.Integer, primary_key=True, index=True, unique=True, nullable=False)
+    sponsor_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), name='sponsor_id', nullable=False)
+    sponsored_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), name='sponsored_id', nullable=False)
+
+    def __repr__(self):
+        return '<SponsoredUsers {}>'.format(self.sponsored_user_id)
+
+    def get_id(self):
+        return str(self.sponsored_user_id)
+
 
 
 @login.user_loader

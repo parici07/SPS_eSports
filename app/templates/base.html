@@ -22,7 +22,16 @@
             flash.style.display = "none";
         }
 
-        function navBar(){}
+        function showNavBar(){
+            document.getElementById("navbar").style.width = "50vh";
+            document.getElementById("navbar").style.paddingLeft = "1em";
+        }
+
+        function hideNavBar(){
+            document.getElementById("navbar").style.width = "0";
+            document.getElementById("navbar").style.paddingLeft = "0";
+
+        }
 
         function showFilters(){
             var filters = document.getElementsByClassName("search-filter-container")[0];
@@ -75,12 +84,35 @@
         <a href="{{ url_for('edit_profile') }}">Edit Profile</a>
         <a href="{{ url_for('user', username=current_user.username) }}"><i class="fa-solid fa-user"></i>   {{current_user.username}}</a>
         <a href="{{ url_for('logout') }}">Logout</a>
-        <a href="javascript:navBar()"><i class="fa-solid fa-bars"></i></a>
+        <a href="javascript:showNavBar()"><i class="fa-solid fa-bars"></i></a>
+        <a href="javascript:window.history.back();"><i class="fa-solid fa-arrow-left"></i></a>
 
 
       {% endif %}
   </div>
     <hr>
+
+  <div id="navbar">
+      <div class="onerow">
+          <a id="closebtn" href="javascript:hideNavBar()"><i class="fa-solid fa-circle-xmark"></i></a>
+          <a href="{{ url_for('user', username=current_user.username) }}"><i class="fa-solid fa-user"></i>
+              {{current_user.username}}</a>
+
+      </div>
+
+      <a href="{{ url_for('index') }}"><i class="fa-solid fa-house"></i> Home</a>
+      <a href="{{ url_for('create_post') }}"><i class="fa-solid fa-plus"></i> Create Post</a>
+      <a href="{{ url_for('search') }}"><i class="fa-solid fa-search"></i> Games</a>
+      <a href="{{ url_for('user_search') }}"><i class="fa-solid fa-user"></i> Users</a>
+      <a href="{{ url_for('tournament_search') }}"><i class="fa-solid fa-trophy"></i> Tournaments</a>
+      <a href="{{ url_for('team_search') }}"><i class="fa-solid fa-users"></i> Teams</a>
+      <a href="{{ url_for('tournament_leaderboard') }}"><i class="fa-solid fa-trophy"></i> Tournament Leaderboard</a>
+      <a href="{{ url_for('match_leaderboard') }}"><i class="fa-solid fa-trophy"></i> Match Leaderboard</a>
+      <a href="{{ url_for('edit_profile') }}"><i class="fa-solid fa-user"></i> Edit Profile</a>
+      <a href="{{ url_for('logout') }}"><i class="fa-solid fa-sign-out"></i> Logout</a>
+
+
+  </div>
 
   {% with messages = get_flashed_messages() %}
   {% if messages %}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="centre">
+  <div class="gen-container">
+    <div class="info-table">
+      <h1>My Teams</h1>
+      {% if teams %}
+      <table>
+        <tr>
+          <th>Team Name</th>
+          <th>Skill Level</th>
+          <th>Availability</th>
+        </tr>
+        {% for team in teams %}
+        <tr>
+          <td>{{ team.team_name }}</td>
+          <td>{{ team.skill_level }}</td>
+          <td>{{ team.availability }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% else %}
+      <p>You are not in any teams</p>
+      <a href="{{ url_for('team_search') }}"><i class="fa-solid fa-magnifying-glass"></i>   Search for teams to join</a>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

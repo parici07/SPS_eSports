@@ -34,6 +34,17 @@
                         {% endif %}
                         <a href="{{url_for('following', username=user.username)}}">Following</a>
                         <a href="{{url_for('followers', username=user.username)}}">Followers</a>
+                        {% if current_user.role == "Sponsor" %}
+                            {% if user.role == "Student" %}
+                            {% if is_sponsored == False %}
+                            <a href="{{url_for('add_sponsor', user_id=user.user_id)}}"><i
+                                class="fa-solid fa-hand-holding-dollar"></i>  Sponsor</a>
+                            {% else %}
+                            <a href="{{url_for('remove_sponsor', user_id=user.user_id)}}"><i
+                                class="fa-solid fa-hand-holding-dollar"></i>  Remove Sponsorship</a>
+                            {% endif %}
+                            {% endif %}
+                        {% endif %}
                         <br>
 
                         {% if current_user.username == user.username %}
@@ -116,6 +127,7 @@
                             <td>{{tournament.tournament_name}}</td>
                         </tr>
                         {% endfor %}
+                    </table>
                 </div>
                 {% endif %}
 
@@ -143,18 +155,56 @@
     <div class="half">
         <div class="user-posts">
             <h3>Posts</h3>
+            {% if posts %}
             {% for post in posts %}
             <div class="post">
                 <a href="{{url_for('post', post_id=post.post_id)}}"><i
                         class="fa-solid fa-circle-chevron-right"></i>   {{post.post_title}}</a>
-                <h4>{{post.post_date}}</h4>
+                <h4>{{post.post_date|format_datetime}}</h4>
                 <p>{{post.post_content}}</p>
             </div>
             {% endfor %}
+            {% else %}
+            <p>No posts yet</p>
+            {% endif %}
         </div>
     </div>
 
 </div>
+
+{% if user.role == "Sponsor" %}
+<div class="centre">
+    <div class="gen-container">
+        <div class="results">
+            <h3>All Students Sponsored</h3>
+            {% if sponsees %}
+            <table>
+                <tr>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Grade</th>
+                    <th>Availability</th>
+                    <th>Skill Level</th>
+                </tr>
+                {% for sponsee in sponsees %}
+                <tr>
+                    <td><a href="{{url_for('user', username=sponsee.username)}}"><i
+                            class="fa-solid fa-circle-chevron-right"></i>   {{sponsee.username}}</a></td>
+                    <td>{{sponsee.role}}</td>
+                    <td>{{sponsee.grade}}</td>
+                    <td>{{sponsee.availability}}</td>
+                    <td>{{sponsee.skill_level}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p>No students sponsored yet</p>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+{% endif %}
 
 
 

@@ -2,24 +2,35 @@
 
 {% block content %}
 
-  {% if current_user.role == 'Staff' %}
+<div class="centre">
+  <div class="gen-container">
+    <h1>Match {{match.round_match}}, Round {{match.round}}</h1>
+    {% if current_user.role == 'Staff' %}
     <a href="{{url_for('add_match_winner', match_id=match.match_id)}}">Add Winner</a>
     <a href="{{url_for('add_match_details', match_id=match.match_id)}}">Add Players and Date</a>
-  {% endif %}
+    {% endif %}
 
-  <h1>Match {{match.round_match}}, Round {{match.round}}</h1>
+    {% if match.match_date %}
+    <p><i class="fa-regular fa-calendar-days"></i> {{ match.match_date|format_date }}</p>
+    {% endif %}
 
-  {% if match.match_date %}
-    <p>Date: {{ match.match_date }}</p>
-  {% endif %}
+    {% if winner %}
+    <p><i class="fa-solid fa-award"></i>  {{ winner.username }}</p>
+    {% endif %}
 
-  {% if winner %}
-    <p>Winner: {{ winner.username }}</p>
-  {% endif %}
-
-  <h2>Players</h2>
-  {% for player in players %}
-    <p>{{ player.username }}</p>
-  {% endfor %}
+    <div class="info-table lineup">
+      <table>
+        <tr>
+          <th>Players</th>
+        </tr>
+        {% for player in players %}
+        <tr>
+          <td><a href="{{url_for('user', username=player.username)}}"><i class="fa-solid fa-circle-chevron-right"></i>   {{player.username}}</a></td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</div>
 
 {% endblock %}

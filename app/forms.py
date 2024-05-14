@@ -15,7 +15,7 @@ TEAM_SKILL_CHOICES = [("Any Skill Level", "Any Skill Level"), ('Beginner', 'Begi
                       ('Unsure', 'Unsure')]
 
 GRADE_CHOICES = [('3', '3'), ('4', '4'), ('5', '5'), ('6', '6'), ('7', '7'), ('8', '8'), ('9', '9'),
-                 ('10', '10'), ('11', '11'), ('12', '12'), 'Staff', 'Staff']
+                 ('10', '10'), ('11', '11'), ('12', '12'), ('Staff', 'Staff'), ('Sponsor', 'Sponsor')]
 
 AVAILABLE_CHOICES = [('Monday', 'Monday'), ('Tuesday', 'Tuesday'), ('Wednesday', 'Wednesday'),
                      ('Thursday', 'Thursday'), ('Friday', 'Friday'), ('Saturday', 'Saturday'),
@@ -23,7 +23,7 @@ AVAILABLE_CHOICES = [('Monday', 'Monday'), ('Tuesday', 'Tuesday'), ('Wednesday',
                      ('Anytime', 'Anytime'), ('After School', 'After School'),
                      ('Before School', 'Before School'), ('Unsure', 'Unsure')]
 
-TEAM_AVAILABLE_CHOICES =[("Any Availability", "Any Availability"), ('Monday', 'Monday'), ('Tuesday', 'Tuesday'),
+TEAM_AVAILABLE_CHOICES =[('Any Availability', 'Any Availability'), ('Monday', 'Monday'), ('Tuesday', 'Tuesday'),
                         ('Wednesday', 'Wednesday'), ('Thursday', 'Thursday'), ('Friday', 'Friday'),
                         ('Saturday', 'Saturday'), ('Sunday', 'Sunday'), ('Weekdays', 'Weekdays'),
                         ('Weekends', 'Weekends'), ('Anytime', 'Anytime'), ('After School', 'After School'),
@@ -90,7 +90,7 @@ class UserSearchForm(FlaskForm):
     submit = SubmitField('Search')
 
 class TeamSearchForm(FlaskForm):
-    team_name = StringField('Team Name', validators=[DataRequired()])
+    team_name = StringField('Team Name')
     skill_level = SelectField('Skill Level', choices=TEAM_SKILL_CHOICES)
     availability = SelectField('Availability', choices=TEAM_AVAILABLE_CHOICES)
     limit = IntegerField('Limit', validators=[optional()])
@@ -133,7 +133,7 @@ class UploadPfpForm(FlaskForm):
     submit = SubmitField('Upload')
 
 class TournamentSearchForm(FlaskForm):
-    tournament_name = StringField('Tournament Name', validators=[DataRequired()])
+    tournament_name = StringField('Tournament Name')
     tournament_skill_level = SelectField('Skill Level', choices=TEAM_SKILL_CHOICES, validators=[optional()])
     tournament_min_grade = SelectField('Minimum Grade', choices=GRADE_CHOICES, validators=[optional()])
     tournament_start = DateField('Start Date',format='%Y-%m-%d', validators=[optional()])

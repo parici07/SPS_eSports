@@ -2,29 +2,30 @@
 
 {% block content %}
 
-<div class="centre">
-    <h1>Create Post</h1>
-</div>
 
 <div class="centre">
-    <form method="POST" class="post-form" action="{{ url_for('create_post') }}">
-        {{ form.hidden_tag() }}
+    <div class="create-form">
+        <h1>Create Post</h1>
+        <form method="POST" action="{{ url_for('create_post') }}">
+            {{ form.hidden_tag() }}
 
-        <label for="post_title">Title</label>
-        <input type="text" name="post_title" id="post_title" required>
+            <label for="post_title">Title</label>
+            <input type="text" name="post_title" id="post_title" required>
 
-        <label for="post_content">Content</label>
-        <textarea name="post_content" id="post_content" required placeholder="Thoughts...?"></textarea>
+            <label for="post_content">Content</label>
+            <textarea name="post_content" id="post_content" required placeholder="Thoughts...?"></textarea>
 
-        <select name="post_type" id="post_type">
-            <option value="General">General</option>
-            <option value="Game">Game</option>
-            <option value="Team">Team</option>
-            <option value="Event">Event</option>
-        </select>
+            <select name="post_type" id="post_type">
+                <option value="General">General</option>
+                <option value="Game">Game</option>
+                <option value="Team">Team</option>
+                <option value="Event">Event</option>
+            </select>
 
-        <input type="submit" value="Create Post">
-    </form>
+            <input type="submit" value="Create Post">
+        </form>
+    </div>
+
 </div>
 
 {% endblock %}

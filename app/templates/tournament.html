@@ -2,42 +2,82 @@
 
 {% block content %}
 
-<h1>{{tournament.tournament_name}}</h1>
+<div class="centre">
+    <div class="gen-container">
+        <h1>{{tournament.tournament_name}}</h1>
 
-{% if in_tournament == 0 %}
-    <a href="{{url_for('join_tournament', tournament_id=tournament.tournament_id)}}">Join Tournament</a>
-{% else %}
-    <a href="{{url_for('join_tournament', tournament_id=tournament.tournament_id)}}">Leave Tournament</a>
-{% endif %}
+        {% if in_tournament == 0 %}
+        <a href="{{url_for('join_tournament', tournament_id=tournament.tournament_id)}}"><i
+                class="fa-solid fa-right-to-bracket"></i>  Join Tournament</a>
+        {% else %}
+        <a href="{{url_for('join_tournament', tournament_id=tournament.tournament_id)}}">Leave Tournament <i
+                class="fa-solid fa-right-from-bracket"></i></a>
+        {% endif %}
 
-<h2>{{tournament.tournament_description}}</h2>
+        <p>{{tournament.tournament_description}}</p>
 
-<h3>Start Date: {{tournament.tournament_start}}</h3>
-<h3>End Date: {{tournament.tournament_end}}</h3>
+        <p><i class="fa-solid fa-calendar-days"></i>   {{tournament.tournament_start|format_date}} - {{tournament.tournament_end|format_date}}</p>
+        {% if winner %}
+        <h3><i class="fa-solid fa-trophy"></i>   {{winner.username}}</h3>
+        {% endif %}
 
-{% if winner %}
-    <h3>Winner: {{winner.username}}</h3>
-{% endif %}
+        <div class="info-table firstcolumn">
+            <table>
+                <tr>
+                    <td>Minimum Grade</td>
+                    <td>{{tournament.tournament_min_grade}}</td>
+                </tr>
 
-<h4>Min Grade: {{tournament.tournament_min_grade}}</h4>
-<h4>Skill Level: {{tournament.tournament_skill_level}}</h4>
+                <tr>
+                    <td>Skill Level</td>
+                    <td>{{tournament.tournament_skill_level}}</td>
+                </tr>
+            </table>
+        </div>
 
-<h4>Participants: {{p_number}}/{{tournament.participants}}</h4>
+        {% if user.role == 'Staff' %}
+        <a href="{{url_for('add_winner', tournament_id=tournament.tournament_id)}}"><i
+                class="fa-regular fa-square-plus"></i>   Add Winner</a>
+        {% endif %}
 
-{% if user.role == 'Staff' %}
-    <a href="{{url_for('add_winner', tournament_id=tournament.tournament_id)}}">Add Winner</a>
-{% endif %}
+        <div class="info-table lineup">
+            <p>Max Participants: <i class="fa-solid fa-user"></i>   {{p_number}}/{{tournament.participants}}</p>
+            <table>
+                <tr>
+                    <th>Participants</th>
+                </tr>
 
-<h2>Participants</h2>
-{% for participant in participants %}
-    <li>{{participant.username}}</li>
-{% endfor %}
+                {% for participant in participants %}
+                <tr>
+                    <td><a href="{{url_for('user', username=participant.username)}}"><i
+                            class="fa-solid fa-circle-chevron-right"></i>   {{participant.username}}</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
 
-<h2>Matches</h2>
-{% for match in matches %}
-    <li>
-        <a href="{{url_for('match', match_id=match.match_id)}}">Match {{match.round_match}}, Round {{match.round}}</a>
-    </li>
-{% endfor %}
+        <div class="info-table lineup">
+            <h1>Matches</h1>
+            <table>
+                <tr>
+                    <th>Match</th>
+
+                </tr>
+
+                {% for match in matches %}
+                <tr>
+                    <td><a href="{{url_for('match', match_id=match.match_id)}}"><i
+                            class="fa-solid fa-circle-chevron-right"></i>   Round
+                        {{match.round}}, Match {{match.round_match}}</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+
+
+    </div>
+</div>
+
 
 {% endblock %}

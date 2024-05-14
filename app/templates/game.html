@@ -49,8 +49,9 @@
         <a href="{{url_for('game_post', game_id=game.game_id)}}"><i class="fa-solid fa-square-plus"></i>   Create a post about this game</a>
         {% if posts %}
         {% for post in posts %}
-        <div class="posts">
-            <h3>{{post.post_title}} | posted on {{post.post_date}}</h3>
+        <div class="post">
+            <h3><a href="{{url_for('post', post_id=post.post_id)}}"><i class="fa-solid fa-circle-chevron-right"></i>   {{post.post_title}} | {{post.post_date|format_datetime}}</a></h3>
+            <p></p>
             <p>{{post.post_content}}</p>
         </div>
         {% endfor %}

@@ -5,12 +5,13 @@ from app.forms import LoginForm, RegistrationForm, EditProfileForm, GameSearchFo
     AddWinnerForm, CommentForm, AddMatchDetailsForm, AddMatchWinnerForm, CreatePractiseForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Games, Teams, TeamUsers, Posts, Following, Likes, Tournaments, FavouriteGames, \
-    TournamentUsers, Comments, Matches, MatchUsers, Practises
+    TournamentUsers, Comments, Matches, MatchUsers, Practises, SponsoredUsers
 from werkzeug.urls import url_parse
 from werkzeug.utils import secure_filename
 import csv # now redundant, used for converting the csv file to db
 import datetime as dt
-from datetime import datetime
+from datetime import datetime, timedelta
+
 import os
 import math
 
@@ -47,14 +48,18 @@ def index():
     tournaments = []
     for tournament_user in tournament_users:
         tournament = Tournaments.query.filter_by(tournament_id=tournament_user.tournament_id).first()
-        tournaments.append(tournament)
+        # if it hasn't been longer than a day since the tournament
+        if tournament.tournament_end + timedelta(days=1) > datetime.now():
+            tournaments.append(tournament)
 
     # get all matches user is in
     match_users = MatchUsers.query.filter_by(match_user=current_user.user_id).all()
     matches = []
     for match_user in match_users:
         match = Matches.query.filter_by(match_id=match_user.match_id).first()
-        matches.append(match)
+        # if it hasn't been longer than a day since the match
+        if match.match_date + timedelta(days=1) > datetime.now():
+            matches.append(match)
 
     # order by date
     tournaments = sorted(tournaments, key=lambda x: x.tournament_start, reverse=False)
@@ -73,7 +78,10 @@ def index():
     for team in teams:
         practise = Practises.query.filter_by(team_id=team.team_id).all()
         for p in practise:
-            practises.append(p)
+            # if it hasn't been longer than a day since the practise
+            current = datetime.now()
+            if p.practise_date + timedelta(days=1) > current.date():
+                practises.append(p)
 
     # sort practises by date
     practises = sorted(practises, key=lambda x: x.practise_date, reverse=False)
@@ -148,14 +156,10 @@ def register():
 def edit_profile():
     form = EditProfileForm()
     # set default form values as current user values
-    form.user_bio.data = current_user.user_bio
-    form.pronouns.data = current_user.pronouns
-    form.skill_level.data = current_user.skill_level
-    form.grade.data = current_user.grade
-    form.availability.data = current_user.availability
+
     user = current_user
 
-
+    print(request.form)
     if form.validate_on_submit():
         current_user.user_bio = form.user_bio.data
         current_user.pronouns = form.pronouns.data
@@ -167,6 +171,7 @@ def edit_profile():
         return redirect(url_for('user', username=current_user.username))
     else:
         print(form.errors)
+        print(form.data)
 
     return render_template('edit_profile.html', title="Edit Profile", form=form, user=user)
 
@@ -185,6 +190,7 @@ def upload_pfp():
         current_user.pfp = file_name
         db.session.commit()
         flash('Profile Picture Uploaded')
+
         return redirect(url_for('user', username=current_user.username))
     return render_template('upload_pfp.html', title="Upload Profile Picture", form=form)
 
@@ -222,16 +228,35 @@ def user(username):
 
     posts = Posts.query.filter_by(user_id=user.user_id).order_by(Posts.post_date.desc()).all()
 
-    # convert post dates to readable format
-    for post in posts:
-        post.post_date = post.post_date.strftime('%d/%m/%Y %I:%M %p')
+
 
     # get first part of post content
     for post in posts:
         if len(post.post_content) > 50:
             post.post_content = post.post_content[:50] + '...'
+
+
+    # if current user is sponsor
+    if current_user.role == "Sponsor":
+        is_sponsored = SponsoredUsers.query.filter_by(sponsor_id=current_user.user_id, sponsored_id=user.user_id).count()
+    else:
+        is_sponsored = False
+
+    # if the user is a sponsor
+    sponsees = []
+    if user.role == "Sponsor":
+        all_sponsees = SponsoredUsers.query.filter_by(sponsor_id=user.user_id).all()
+        for sponsee in all_sponsees:
+            print(sponsee)
+            id = sponsee.sponsored_id
+            sponsee = User.query.filter_by(user_id=id).first()
+            sponsees.append(sponsee)
+
+
+
+
     return render_template('user.html', user=user, posts=posts, username=username, is_following=is_following,
-                           mutuals=mutuals, tournaments=tournaments, favourites=favourites, matches=matches)
+                           mutuals=mutuals, tournaments=tournaments, favourites=favourites, matches=matches, is_sponsored=is_sponsored, sponsees=sponsees)
 
 @app.route('/following/<username>')
 @login_required
@@ -322,6 +347,7 @@ def game(game_id):
 
     posts = Posts.query.filter_by(post_type=game.game_title + ' for ' + game.platform).order_by(Posts.post_date.desc()).all()
 
+
     user = current_user
     favourite = FavouriteGames.query.filter_by(user_id=user.user_id, game_id=game.game_id).count()
 
@@ -348,7 +374,7 @@ def game_post(game_id):
         flash('Post created successfully')
         return redirect(url_for('game', game_id=game_id))
     else:
-        flash('Something went wrong. Please try again.')
+        print(form.errors)
 
     return render_template('game_post.html', title="Create Post", form=form, game=game)
 
@@ -428,6 +454,19 @@ def unfollow(username):
 
 
 ### TEAM HANDLING ###
+
+@app.route('/my_teams', methods=['GET', 'POST'])
+@login_required
+def my_teams():
+    user = current_user
+    team_users = TeamUsers.query.filter_by(user_id=user.user_id).all()
+    teams = []
+    for team_user in team_users:
+        team = Teams.query.filter_by(team_id=team_user.team_id).first()
+        teams.append(team)
+
+    return render_template('my_teams.html', title="My Teams", teams=teams)
+
 @app.route('/create_team', methods=['GET', 'POST'])
 @login_required
 def create_team():
@@ -474,9 +513,19 @@ def create_team():
 @login_required
 def team_search():
     form = TeamSearchForm()
+    user = current_user
+    user_teams = TeamUsers.query.filter_by(user_id=user.user_id).all()
+    teams = []
+    for user_team in user_teams:
+        team = Teams.query.filter_by(team_id=user_team.team_id).first()
+        if team not in teams:
+            teams.append(team)
 
     if form.validate_on_submit():
-        teams = Teams.query.filter(Teams.team_name.contains(form.team_name.data)).all()
+        if form.team_name.data == '':
+            teams = Teams.query.all()
+        else:
+            teams = Teams.query.filter(Teams.team_name.contains(form.team_name.data)).all()
         skill_level = form.skill_level.data
         availability = form.availability.data
 
@@ -515,7 +564,7 @@ def team_search():
             return render_template('team_results.html', teams=teams, final_teams=final_teams, title="Team Results")
     else:
         print(form.errors)
-    return render_template('team_search.html', title="Search Teams", form=form)
+    return render_template('team_search.html', title="Search Teams", form=form, teams=teams)
 
 @app.route('/team/<team_id>')
 @login_required
@@ -547,11 +596,11 @@ def join_team(team_id):
 
     team_users = TeamUsers.query.filter_by(team_id=team_id).all()
 
-    if team.skill_level != 'Any Skill Level' and team.skill_level != user.skill_level:
+    if team.skill_level != 'Any' and team.skill_level != user.skill_level:
         flash('This team does not take applications from someone of your skill level. Sorry!')
         return redirect(url_for('team', team_id=team_id))
 
-    if team.availability != 'Any Availability' and team.availability != user.availability:
+    if team.availability != 'Any' and team.availability != user.availability:
         flash('This team does not take applications from someone with your availability. Sorry!')
         return redirect(url_for('team', team_id=team_id))
 
@@ -615,6 +664,17 @@ def delete_post(post_id):
         flash('You cannot delete this post')
         return redirect(url_for('post', post_id=post_id))
 
+    # get all post comments
+    comments = Comments.query.filter_by(post_id=post_id).all()
+    for comment in comments:
+        db.session.delete(comment)
+
+    # get all likes
+    likes = Likes.query.filter_by(post_id=post_id).all()
+    for like in likes:
+        db.session.delete(like)
+
+
     db.session.delete(post)
     db.session.commit()
     flash('Post deleted successfully')
@@ -629,10 +689,11 @@ def post(post_id):
 
     is_liked = Likes.query.filter_by(user_id=current_user.user_id, post_id=post_id).count()
     my_post = Posts.query.filter_by(post_id=post_id, user_id=current_user.user_id).count()
+    likes = Likes.query.filter_by(post_id=post_id).count()
 
     comments = Comments.query.filter_by(post_id=post_id).all()
 
-    return render_template('post.html', post=post, creator=creator, is_liked=is_liked, my_post=my_post, comments=comments)
+    return render_template('post.html', post=post, creator=creator, is_liked=is_liked, my_post=my_post, comments=comments, likes=likes)
 
 @app.route('/like/<post_id>', methods=['GET', 'POST'])
 @login_required
@@ -755,7 +816,10 @@ def tournament_search():
 
     if form.validate_on_submit():
         tournament_name = form.tournament_name.data
-        tournaments = Tournaments.query.filter(Tournaments.tournament_name.contains(tournament_name)).all()
+        if tournament_name == '':
+            tournaments = Tournaments.query.all()
+        else:
+            tournaments = Tournaments.query.filter(Tournaments.tournament_name.contains(tournament_name)).all()
 
         tournament_skill_level = form.tournament_skill_level.data
         tournament_min_grade = form.tournament_min_grade.data
@@ -1081,7 +1145,7 @@ def match_leaderboard():
 
 
     for user in users:
-        matches_won = MatchUsers.query.filter_by(match_user=user.user_id).count()
+        matches_won = Matches.query.filter_by(match_winner=user.user_id).count()
         if matches_won > 0:
             leaderboard.append((user, matches_won))
 
@@ -1149,10 +1213,80 @@ def create_practise(team_id):
         flash('Practise created successfully')
         return redirect(url_for('team', team_id=team_id))
     else:
-        flash('Something went wrong. Please try again.')
         print(form.errors)
 
     return render_template('create_practise.html', title="Create Practise", team=team, form=form, team_id=team_id)
+
+@app.route('/practise/<practise_id>')
+@login_required
+def practise(practise_id):
+    practise = Practises.query.filter_by(practise_id=practise_id).first_or_404()
+    team = Teams.query.filter_by(team_id=practise.team_id).first()
+    user = current_user
+
+    practise_datetime = dt.datetime.combine(practise.practise_date, practise.practise_time)
+    print(practise_datetime)
+    current_datetime = dt.datetime.now()
+
+    if practise_datetime < current_datetime:
+        past_practise = True
+    else:
+        past_practise = False
+        time_to = practise_datetime - current_datetime
+        time_to = str(timedelta(seconds=time_to.seconds))
+        time_to = time_to.split(':')
+        time_to = time_to[0] + ' hours, ' + time_to[1] + ' minutes, ' + time_to[2] + ' seconds '
+
+    return render_template('practise.html', practise=practise, team=team, user=user, past_practise=past_practise, time_to=time_to)
+
+### SPONSORSHIP HANDLING ###
+@app.route('/add_sponsor/<user_id>', methods=['GET', 'POST'])
+@login_required
+def add_sponsor(user_id):
+    user = current_user
+    sponsored = User.query.filter_by(user_id=user_id).first_or_404()
+
+    if user.role != 'Sponsor':
+        return redirect('index')
+
+    if sponsored.role != "Student":
+        return redirect('index')
+
+    # check if already sponsored
+    if SponsoredUsers.query.filter_by(sponsored_id=user_id).count() > 0:
+        flash('User already sponsored')
+        return redirect(url_for('user', username=sponsored.username))
+
+
+
+    sponsor = SponsoredUsers(sponsor_id=user.user_id, sponsored_id=user_id)
+    db.session.add(sponsor)
+    db.session.commit()
+    flash('User sponsored successfully')
+    return redirect(url_for('user', username=sponsored.username))
+
+@app.route('/remove_sponsor/<user_id>', methods=['GET', 'POST'])
+@login_required
+def remove_sponsor(user_id):
+    user = current_user
+    sponsored = User.query.filter_by(user_id=user_id).first_or_404()
+
+    if user.role != 'Sponsor':
+        return redirect('index')
+
+    if sponsored.role != "Student":
+        return redirect('index')
+
+    # check if already sponsored
+    if SponsoredUsers.query.filter_by(sponsored_id=user_id).count() == 0:
+        flash('User not sponsored')
+        return redirect(url_for('user', username=sponsored.username))
+
+    sponsor = SponsoredUsers.query.filter_by(sponsored_id=user_id).first()
+    db.session.delete(sponsor)
+    db.session.commit()
+    flash('User sponsorship removed successfully')
+    return redirect(url_for('user', username=sponsored.username))
 
 
 ### DATA CHECKING ###

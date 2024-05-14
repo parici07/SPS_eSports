@@ -24,7 +24,13 @@
     </div>
 </div>
 {% else %}
-    <p>No tournaments found.</p>
+    <div class="centre">
+        <div class="results">
+            <p>No tournaments found.</p>
+            <a href="{{ url_for('tournament_search') }}"><i class="fa-solid fa-arrow-left"></i> Back to search</a>
+        </div>
+
+    </div>
 {% endif %}
 
 {% endblock %}

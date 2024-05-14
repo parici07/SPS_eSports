@@ -16,5 +16,13 @@ login.login_view = 'login'
 def format_date(date):
     return date.strftime('%d/%m/%Y')
 
+@app.template_filter('format_datetime')
+def format_datetime(date):
+    return date.strftime('%d/%m/%Y %I:%M %p')
+
+@app.template_filter('format_time')
+def format_time(date):
+    return date.strftime('%I:%M %p')
+
 from app import routes, models
 

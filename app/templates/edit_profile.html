@@ -1,60 +1,52 @@
 {% extends "base.html" %}
 
 {% block content %}
-<a href="{{url_for('upload_pfp')}}">Upload Profile Picture</a>
-<form action="{{url_for('edit_profile')}}" method="post">
-    {{ form.hidden_tag() }}
+<div class="centre">
+    <div class="create-form">
+        <a href="{{url_for('upload_pfp')}}"><i class="fa-solid fa-file-import"></i>   Upload Profile Picture</a>
+        <form action="{{url_for('edit_profile')}}" method="post">
+            {{ form.hidden_tag() }}
 
-    <label for="user_bio">About Me</label>
-    <textarea type="textarea" name="user_bio">{{current_user.user_bio}}</textarea>
+            <label for="user_bio">About Me</label>
+            <textarea id="user_bio" name="user_bio">{{current_user.user_bio}}</textarea>
 
-    <label for="pronouns">Pronouns</label>
-    <input type="text" name="pronouns" value="{{current_user.pronouns}}">
+            <label for="pronouns">Pronouns</label>
+            <input type="text" id="pronouns" name="pronouns" value="{{current_user.pronouns}}">
 
-    <label for="skill_level">Skill Level</label>
-    <select id="skill_level" name="skill_level">
-        <option value="Beginner">Beginner</option>
-        <option value="Intermediate">Intermediate</option>
-        <option value="Advanced">Advanced</option>
-        <option value="Expert">Expert</option>
-        <option value="Unsure">Unsure</option>
-    </select>
+            {{form.skill_level.label}}
+            {{form.skill_level}}
 
+            {{form.grade.label}}
+            <select id="grade" name="grade">
+                {% if current_user.role == "Student" %}
+                <option value="3">Grade 3</option>
+                <option value="4">Grade 4</option>
+                <option value="5">Grade 5</option>
+                <option value="6">Grade 6</option>
+                <option value="7">Grade 7</option>
+                <option value="8">Grade 8</option>
+                <option value="9">Grade 9</option>
+                <option value="10">Grade 10</option>
+                <option value="11">Grade 11</option>
+                <option value="12">Grade 12</option>
+                {% endif %}
+                {% if current_user.role == "Staff" %}
+                <option value="Staff">Staff</option>
+                {% endif %}
+                {% if current_user.role == "Sponsor" %}
+                <option value="Sponsor">Sponsor</option>
+                {% endif %}
 
-    {% if current_user.role == "Student" %}
-        <label for="grade">Grade</label>
-        <select id="grade" name="grade">
-            <option value="3">Grade 3</option>
-            <option value="4">Grade 4</option>
-            <option value="5">Grade 5</option>
-            <option value="6">Grade 6</option>
-            <option value="7">Grade 7</option>
-            <option value="8">Grade 8</option>
-            <option value="9">Grade 9</option>
-            <option value="10">Grade 10</option>
-            <option value="11">Grade 11</option>
-            <option value="12">Grade 12</option>
-        </select>
-    {% endif %}
+            </select>
 
-    <label for="availability">Availability</label>
-    <select id="availability" name="availability">
-        <option value="Monday">Monday</option>
-        <option value="Tuesday">Tuesday</option>
-        <option value="Wednesday">Wednesday</option>
-        <option value="Thursday">Thursday</option>
-        <option value="Friday">Friday</option>
-        <option value="Saturday">Saturday</option>
-        <option value="Sunday">Sunday</option>
-        <option value="Weekdays">Weekdays</option>
-        <option value="Weekends">Weekends</option>
-        <option value="Anytime">Anytime</option>
-        <option value="After School">After School</option>
-        <option value="Before School">Before School</option>
-        <option value="Unsure">Unsure</option>
-    </select>
+            {{form.availability.label}}
+            {{form.availability}}
 
-    <input type="submit" value="Submit">
-</form>
+            <br>
+            <input type="submit" value="Save changes">
+        </form>
+    </div>
+</div>
+
 
 {% endblock %}

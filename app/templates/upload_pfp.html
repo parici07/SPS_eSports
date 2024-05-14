@@ -2,12 +2,18 @@
 
 {% block content %}
 
-<form action="{{url_for('upload_pfp')}}" method="post" enctype="multipart/form-data">
-  {{form.hidden_tag()}}
+<div class="centre">
+  <div class="create-form">
+    <form action="{{url_for('upload_pfp')}}" method="post" enctype="multipart/form-data">
+      {{form.hidden_tag()}}
 
-  <input type="file" id="file_input" name="pfp" accept="image/*">
-  <input type="submit" value="Upload">
+      <label for="file_input" class="custom-file-upload"><i class="fa-solid fa-file-import"></i>   Upload Profile Picture</label>
+      <input type="file" id="file_input" name="pfp" accept="image/*">
+      <input type="submit" value="Upload">
 
-</form>
+    </form>
+  </div>
+</div>
+
 
 {% endblock %}
