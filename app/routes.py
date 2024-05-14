@@ -225,6 +225,16 @@ def user(username):
         game = Games.query.filter_by(game_id=favourite.game_id).first()
         favourites.append(game)
 
+    #checks if user is sponsored
+    if SponsoredUsers.query.filter_by(sponsored_id=user.user_id).count() > 0:
+        is_sponsee = True
+        # get the sponsor name
+        sponsor_id = SponsoredUsers.query.filter_by(sponsored_id=user.user_id).first().sponsor_id
+        sponsor = User.query.filter_by(user_id=sponsor_id).first()
+    else:
+        is_sponsee = False
+        sponsor = None
+
 
     posts = Posts.query.filter_by(user_id=user.user_id).order_by(Posts.post_date.desc()).all()
 
@@ -256,7 +266,7 @@ def user(username):
 
 
     return render_template('user.html', user=user, posts=posts, username=username, is_following=is_following,
-                           mutuals=mutuals, tournaments=tournaments, favourites=favourites, matches=matches, is_sponsored=is_sponsored, sponsees=sponsees)
+                           mutuals=mutuals, tournaments=tournaments, favourites=favourites, matches=matches, is_sponsored=is_sponsored, sponsees=sponsees, is_sponsee=is_sponsee, sponsor=sponsor)
 
 @app.route('/following/<username>')
 @login_required

@@ -2,16 +2,28 @@
 
 {% block content %}
 
-<h1>Following</h1>
+<div class="centre">
+    <div class="gen-container">
+        <h1>Following</h1>
+        {% if following %}
+        <div class="info-table lineup">
+            <table>
+                <tr>
+                    <th>Username</th>
+                </tr>
+                {% for user in following %}
+                <tr>
+                    <td><a href="{{url_for('user', username=user.username)}}"><i
+                            class="fa-solid fa-circle-chevron-right"></i> {{user.username}}</a></td>
+                </tr>
+                {% endfor %}
+            </table>
 
-{% if following %}
-    <ul>
-        {% for user in following %}
-            <li><a href="{{url_for('user', username=user.username)}}">{{user.username}}</a></li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>{{user.username}} doesn't follow anyone</p>
-{% endif %}
+        </div>
+        {% else %}
+        <p>{{user.username}} doesn't follow anyone</p>
+        {% endif %}
+    </div>
+</div>
 
 {% endblock %}
