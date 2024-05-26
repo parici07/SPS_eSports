@@ -56,6 +56,7 @@ body{
 
 .row{
     display: flex;
+    width: 100%;
 }
 .half{
     flex: 50%;
@@ -85,12 +86,13 @@ body{
     align-items: center;
     padding: 1em 0.5em;
 
+
 }
 
 .header a{
     padding: 0em 0.7em;
     font-family: 'Roboto';
-    font-size: 1em;
+    font-size: 0.98em;
     text-decoration: none;
     transition: 0.5s;
     position: relative;
@@ -99,6 +101,14 @@ body{
 
 }
 
+.onerow{
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+}
 .header a:hover{
     color: var(--accent);
     transition: 0.3s;
@@ -321,7 +331,7 @@ label{
     flex-flow: column wrap;
     align-items: center;
     justify-content: center;
-    width: 30%;
+    width: 100vh;
     font-family: 'Roboto';
     font-size: 1em;
     padding: 1em;
@@ -944,10 +954,156 @@ label{
 
 
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 700px) {
 
 
 
+    .login-form{
+        width: 90%;
+
+
+    }
+
+    .row{
+        flex-flow: column wrap;
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+    .half{
+        flex: 100%;
+    }
+
+    .container{
+        margin-left: 1em;
+    }
+
+    .header{
+        flex-flow: row wrap;
+        align-items: space-between;
+        justify-content: space-around;
+    }
+
+    .header a{
+        margin: 0;
+        padding: 0.5em;
+        justify-content: center;
+        font-size: 1.5em;
+    }
+
+    .header a:hover{
+        background-color: var(--bg2);
+    }
+
+    .header a::before{
+        display: none;
+    }
+
+    .header a::before:hover{
+        display: none;
+    }
+
+    .expand{
+        display: none;
+    }
+
+    .hidemobile{
+        display: none;
+    }
+
+    .showmobile{
+        display: block;
+    }
+
+    .user-posts{
+        height: auto;
+    }
+
+    .gen-container{
+        width: 90%;
+    }
+
+    .create-form{
+        width: 90%;
+        display: flex;
+        flex-flow: column wrap;
+        align-items: center;
+    }
+    .create-form form{
+        width: 100%;
+        display: flex;
+        box-sizing: border-box;
+    }
+
+    .create-form input[type="text"], .create-form textarea, .create-form input[type="date"],
+    .create-form input[type="time"], .create-form input[type="file"], .create-form input[type="submit"], .create-form select{
+        width: 100%;
+    }
+
+    .search-bar{
+        display: flex;
+        flex-flow: column wrap;
+    }
+
+    .search-bar input, .search-bar input[type="submit"]{
+        width: 70%;
+    }
+
+    .search-filter-container{
+        flex-flow: column;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .search-filters{
+        flex-flow: column;
+    }
+
+    .search-filters select, .search-filters input[type="text"], .search-filters input[type="number"]{
+        width: 100%;
+    }
+
+    .user-box{
+        width: 70%;
+    }
+
+    .user-header{
+        flex-flow: column wrap;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .user-header .gen-container{
+        width: 100%;
+    }
+    .quarter{
+        flex: 100%;
+    }
+
+    .three-quarter{
+        flex: 100%;
+    }
+    .user-header .quarter img{
+        width: 100%;
+
+    }
+
+    .info-table{
+        width: 100%;
+    }
+    .user-posts{
+        width: 90%;
+    }
+
+    .user-posts{
+        width: 90%;
+    }
+
+    .user-posts.userprof{
+        width: 70%;
+     }
 
 
 }

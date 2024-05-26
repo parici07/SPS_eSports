@@ -13,10 +13,10 @@
                     <div class="quarter">
                         {% if user.pfp %}
                         <img src="{{url_for('static', filename='pfps/' + user.pfp)}}"
-                             alt="profile picture">
+                             alt="profile picture for {{user.username}}">
                         {% else %}
                         <img src="{{url_for('static', filename='pfps/default.jpg')}}"
-                             alt="profile picture">
+                             alt="default profile picture of a stylised person on a grey background">
                         {% endif %}
                     </div>
                     <div class="three-quarter">
@@ -159,7 +159,7 @@
     </div>
 
     <div class="half">
-        <div class="user-posts">
+        <div class="user-posts userprof">
             <h3>Posts</h3>
             {% if posts %}
             {% for post in posts %}

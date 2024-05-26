@@ -20,25 +20,20 @@ import math
 @app.route('/index')
 @login_required
 def index():
+    # get all users followed
     following = Following.query.filter_by(user_id=current_user.user_id).all()
     followed_users = []
-
-    # get all users followed
     for user in following:
         user = User.query.filter_by(user_id=user.following_id).first()
         followed_users.append(user)
-    print(followed_users)
 
     # get all posts from followed users
     posts = []
     for user in followed_users:
         user_posts = Posts.query.filter_by(user_id=user.user_id).all()
         for post in user_posts:
-            print('Post: ' + str(post))
-            print(post.post_title)
-            print(user.username)
             posts.append((post, user.username))
-    print(posts)
+
 
 
 
@@ -87,6 +82,10 @@ def index():
     practises = sorted(practises, key=lambda x: x.practise_date, reverse=False)
 
     return render_template('index.html', title="Home", tournaments=tournaments, matches=matches, practises=practises, posts=posts)
+
+@app.route('/about')
+def about():
+    return render_template('about.html', title="About")
 
 
 ### LOGIN AND ASSOCIATED ROUTES ###
@@ -140,6 +139,7 @@ def register():
 
         if email_domain != 'stpauls.qld.edu.au' and spons == False:
             flash('Invalid email domain. Please use your school email.')
+            return redirect(url_for('register'))
             return redirect(url_for('register'))
 
         user.set_password(form.password.data)
@@ -200,7 +200,7 @@ def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     username = user.username
 
-    # checks if following users
+    # checks if following user
     if Following.query.filter_by(user_id=current_user.user_id, following_id=user.user_id).count() > 0:
         is_following = True
     else:
@@ -212,10 +212,8 @@ def user(username):
     else:
         mutuals = False
 
-    # gets all tournaments won
+    # gets all tournaments / matches won
     tournaments = Tournaments.query.filter_by(winner=user.user_id).all()
-
-    # gets all matches won
     matches = Matches.query.filter_by(match_winner=user.user_id).all()
 
     # gets favourited games
@@ -225,7 +223,7 @@ def user(username):
         game = Games.query.filter_by(game_id=favourite.game_id).first()
         favourites.append(game)
 
-    #checks if user is sponsored
+    # checks if user is sponsored
     if SponsoredUsers.query.filter_by(sponsored_id=user.user_id).count() > 0:
         is_sponsee = True
         # get the sponsor name
@@ -235,23 +233,19 @@ def user(username):
         is_sponsee = False
         sponsor = None
 
-
+    # gets all posts from user
     posts = Posts.query.filter_by(user_id=user.user_id).order_by(Posts.post_date.desc()).all()
-
-
-
+    # get first part of post content
     # get first part of post content
     for post in posts:
         if len(post.post_content) > 50:
             post.post_content = post.post_content[:50] + '...'
-
 
     # if current user is sponsor
     if current_user.role == "Sponsor":
         is_sponsored = SponsoredUsers.query.filter_by(sponsor_id=current_user.user_id, sponsored_id=user.user_id).count()
     else:
         is_sponsored = False
-
     # if the user is a sponsor
     sponsees = []
     if user.role == "Sponsor":
@@ -261,9 +255,6 @@ def user(username):
             id = sponsee.sponsored_id
             sponsee = User.query.filter_by(user_id=id).first()
             sponsees.append(sponsee)
-
-
-
 
     return render_template('user.html', user=user, posts=posts, username=username, is_following=is_following,
                            mutuals=mutuals, tournaments=tournaments, favourites=favourites, matches=matches, is_sponsored=is_sponsored, sponsees=sponsees, is_sponsee=is_sponsee, sponsor=sponsor)
@@ -303,16 +294,16 @@ def followers(username):
 @app.route('/search', methods=['GET', 'POST'])
 @login_required
 def search():
-    form = GameSearchForm()
+    form = GameSearchForm() # get form
 
-    if form.validate_on_submit():
-        print('Form validated')
-        games = Games.query.filter(Games.game_title.contains(form.game_title.data)).all()
+    if form.validate_on_submit(): # check if form is validated
+        games = Games.query.filter(Games.game_title.contains(form.game_title.data)).all() # get all games containing search term
+        # get filter data
         genre = form.genre.data
         publisher = form.publisher.data
         year = form.year.data
         platform = form.platform.data
-
+        # all filters if a filter is chosen
         if genre != 'All Genres':
             filtered_games = []
             for game in games:
@@ -341,8 +332,7 @@ def search():
                     filtered_games.append(game)
             games = filtered_games
 
-
-        if games is None:
+        if games is None: # if no games found
             flash('No results found. Please try again.')
             return render_template('search.html', title="Search", form=form)
         else:
@@ -356,7 +346,6 @@ def game(game_id):
     game = Games.query.filter_by(game_id=game_id).first_or_404()
 
     posts = Posts.query.filter_by(post_type=game.game_title + ' for ' + game.platform).order_by(Posts.post_date.desc()).all()
-
 
     user = current_user
     favourite = FavouriteGames.query.filter_by(user_id=user.user_id, game_id=game.game_id).count()
@@ -524,12 +513,13 @@ def create_team():
 def team_search():
     form = TeamSearchForm()
     user = current_user
+
+    # gets all teams user is in
     user_teams = TeamUsers.query.filter_by(user_id=user.user_id).all()
     teams = []
     for user_team in user_teams:
         team = Teams.query.filter_by(team_id=user_team.team_id).first()
-        if team not in teams:
-            teams.append(team)
+        teams.append(team)
 
     if form.validate_on_submit():
         if form.team_name.data == '':
@@ -659,7 +649,7 @@ def create_post():
 
         db.session.add(post)
         db.session.commit()
-        flash('Post created successfully')
+        flash('Posted!!')
         return redirect(url_for('index'))
     else:
         print(form.errors)
@@ -694,14 +684,14 @@ def delete_post(post_id):
 @app.route('/post/<post_id>', methods=['GET', 'POST'])
 @login_required
 def post(post_id):
-    post = Posts.query.filter_by(post_id=post_id).first_or_404()
-    creator = User.query.filter_by(user_id=post.user_id).first()
+    post = Posts.query.filter_by(post_id=post_id).first_or_404() # get post from url post_id
+    creator = User.query.filter_by(user_id=post.user_id).first() # get creator of post
 
-    is_liked = Likes.query.filter_by(user_id=current_user.user_id, post_id=post_id).count()
-    my_post = Posts.query.filter_by(post_id=post_id, user_id=current_user.user_id).count()
-    likes = Likes.query.filter_by(post_id=post_id).count()
+    is_liked = Likes.query.filter_by(user_id=current_user.user_id, post_id=post_id).count() # check if user has liked post
+    my_post = Posts.query.filter_by(post_id=post_id, user_id=current_user.user_id).count() # check if user is creator of post
+    likes = Likes.query.filter_by(post_id=post_id).count() # get number of likes
 
-    comments = Comments.query.filter_by(post_id=post_id).all()
+    comments = Comments.query.filter_by(post_id=post_id).all() # get list of comments
 
     return render_template('post.html', post=post, creator=creator, is_liked=is_liked, my_post=my_post, comments=comments, likes=likes)
 
@@ -746,7 +736,7 @@ def post_comment(post_id):
 
         db.session.add(comment)
         db.session.commit()
-        flash('Comment created successfully')
+        flash('Comment posted!')
         return redirect(url_for('post', post_id=post_id))
     else:
         flash('Something went wrong. Please try again.')
@@ -761,10 +751,8 @@ def post_comment(post_id):
 def create_tournament():
     user = current_user
     form = CreateTournamentForm()
-    print(request.form)
 
-
-    if user.role != 'Staff':
+    if user.role != 'Staff': # ensures only staff can create tournaments
         flash('You are not authorised to create a tournament.')
         return redirect(url_for('index'))
 
@@ -782,11 +770,21 @@ def create_tournament():
         output = math.log(participants, base)
         if output != int(output):
             flash('Participants must be a power of 2')
+            flash('Participants must be a power of 2')
             return redirect(url_for('create_tournament'))
 
         # make sure tournament name is unique
         if Tournaments.query.filter_by(tournament_name=tournament_name).count() > 0:
             flash('Tournament name must be unique')
+            return redirect(url_for('create_tournament'))
+
+        #make sure tournament start date is before end date and after today
+        if tournament_start > tournament_end:
+            flash('Tournament start date must be before end date')
+            return redirect(url_for('create_tournament'))
+        current_time = datetime.now().date()
+        if tournament_start < current_time:
+            flash('Tournament start date must be in the future')
             return redirect(url_for('create_tournament'))
 
 
@@ -810,11 +808,8 @@ def create_tournament():
             participants = participants / 2
         return redirect(url_for('index'))
     else:
-        flash('Something went wrong. Please try again.')
         print(form.errors)
         print(form.data)
-
-
 
     return render_template('create_tournament.html', title="Create Tournament", form=form)
 
@@ -1033,6 +1028,7 @@ def add_match_details(match_id):
 
         if player1_id == player2_id:
             flash('Players cannot be the same')
+            flash('Players cannot be the same')
             return redirect(url_for('add_match_details', match_id=match_id))
 
 
@@ -1043,6 +1039,11 @@ def add_match_details(match_id):
             if match.match_date < current_time:
                 flash('Match has already occured')
                 return redirect(url_for('match', match_id=match_id))
+
+        ## CHECK IF TOURNAMENT IS OVER BEFORE MATCH DATE IS SET ##
+        if tournament.tournament_end < match_date:
+            flash('Match date cannot be after tournament end date')
+            return redirect(url_for('add_match_details', match_id=match_id))
 
         ## ADD IF PLAYER IS ALREADY IN MATCH FOR THAT ROUND ##
         # get all matches for this tournament and this round
@@ -1328,4 +1329,25 @@ def test_formulae():
     return redirect(url_for('index'))
 
 
+@app.route('/database', methods=['GET', 'POST'])
+@login_required
+def database():
+    # open the given csv file
+    with open('vgsales.csv', 'r') as csvfile:
+        # read the csv file and set the delimiter
+        tbl_reader = csv.reader(csvfile, delimiter=',')
+        # skip the row containing headings
+        next(csvfile)
+        # set the game_id
+        id = 1
+        for row in tbl_reader:
+            # add information from the CSV file into an SQL table called 'Games' and commit
+            game = Games(game_id=id, game_title=row[1], platform=row[2], year=row[3], genre=row[4],
+                         publisher=row[5], global_sales=row[10], sales_ranking=row[0])
+            db.session.add(game)
+            db.session.commit()
+            # increase the id by one for each loop
+            id += 1
+
+    return redirect(url_for('index'))
 

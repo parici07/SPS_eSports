@@ -6,6 +6,7 @@ from sqlalchemy import ForeignKeyConstraint
 
 
 class User(UserMixin, db.Model):
+    # information about the user
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
@@ -18,6 +19,7 @@ class User(UserMixin, db.Model):
     grade = db.Column(db.String(64), nullable=True, default='Unsure')
     availability = db.Column(db.String(140), default='Unsure')
 
+    # relationships with other table
     teams = db.relationship('Teams', back_populates='user')
     team_users = db.relationship('TeamUsers', back_populates='user')
     posts = db.relationship('Posts', back_populates='user')
@@ -29,18 +31,22 @@ class User(UserMixin, db.Model):
     matches = db.relationship('Matches', back_populates='user')
     match_users = db.relationship('MatchUsers', back_populates='user')
 
+    # many to one relationships with other tables
     following = db.relationship('Following', backref='user', foreign_keys='Following.user_id')
     followed = db.relationship('Following', foreign_keys='Following.following_id')
 
     sponsor = db.relationship('SponsoredUsers', backref='user', foreign_keys='SponsoredUsers.sponsor_id')
     sponsored = db.relationship('SponsoredUsers', foreign_keys='SponsoredUsers.sponsored_id')
 
+    # get the id of the user
     def get_id(self):
         return str(self.user_id)
 
+    # print the user
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
+    # password hashing and checking
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 

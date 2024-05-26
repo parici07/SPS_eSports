@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='css/favicon.ico') }}">
     <script src="https://kit.fontawesome.com/ea0cb5ba41.js" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script>
 
@@ -23,10 +25,14 @@
         }
 
         function showNavBar(){
-            document.getElementById("navbar").style.width = "50vh";
-            document.getElementById("navbar").style.paddingLeft = "1em";
+            if (window.innerWidth < 800){
+                document.getElementById("navbar").style.width = "100%";
+                document.getElementById("navbar").style.paddingLeft = "1em";
+            } else {
+                document.getElementById("navbar").style.width = "50vh";
+                document.getElementById("navbar").style.paddingLeft = "1em";
+            }
         }
-
         function hideNavBar(){
             document.getElementById("navbar").style.width = "0";
             document.getElementById("navbar").style.paddingLeft = "0";
@@ -59,33 +65,38 @@
         <h1 onclick="location.href='login'">SPS ESPORTS</h1>
         <a href="{{ url_for('login') }}">Login</a>
         <a href="{{ url_for('register') }}">Register</a>
+        <a href="{{ url_for('about') }}">About</a>
 
       {% else %}
+
         <h1 onclick="location.href='{{url_for('index')}}'">SPS ESPORTS</h1>
+          <a href="{{ url_for('index') }}" class="hidemobile"><i class="fa-solid fa-house"></i></a>
+          <a href="{{ url_for('create_post') }}" class="hidemobile">Create Post</a>
+          <a href="{{ url_for('search') }}" class="hidemobile">Games</a>
+          <a href="{{ url_for('user_search') }}" class="hidemobile">Users</a>
+          <a href="{{ url_for('tournament_search') }}" class="hidemobile">Tournaments</a>
+          <a href="{{url_for('team_search')}}" class="hidemobile">Teams</a>
+          <div class="expand" class="hidemobile">
+              <div class="expand-button">
+                  <a href="javascript:showDropdown()">Leaderboards <i class="fa-solid fa-chevron-down"></i></a>
+              </div>
+              <div id="dropdown" class="expand-child">
+                  <a href="{{ url_for('tournament_leaderboard') }}">Tournament Leaderboard</a>
+                  <a href="{{ url_for('match_leaderboard') }}">Match Leaderboard</a>
+              </div>
 
-        <a href="{{ url_for('index') }}"><i class="fa-solid fa-house"></i></a>
-        <a href="{{ url_for('create_post') }}">Create Post</a>
-        <a href="{{ url_for('search') }}">Games</a>
-        <a href="{{ url_for('user_search') }}">Users</a>
-        <a href="{{ url_for('tournament_search') }}">Tournaments</a>
-        <a href="{{url_for('team_search')}}">Teams</a>
-        <div class="expand">
-            <div class="expand-button">
-                <a href="javascript:showDropdown()">Leaderboards  <i class="fa-solid fa-chevron-down"></i></a>
-            </div>
-            <div id="dropdown" class="expand-child">
-                <a href="{{ url_for('tournament_leaderboard') }}">Tournament Leaderboard</a>
-                <a href="{{ url_for('match_leaderboard') }}">Match Leaderboard</a>
-            </div>
-
-        </div>
+          </div>
 
 
-        <a href="{{ url_for('edit_profile') }}">Edit Profile</a>
-        <a href="{{ url_for('user', username=current_user.username) }}"><i class="fa-solid fa-user"></i>   {{current_user.username}}</a>
-        <a href="{{ url_for('logout') }}">Logout</a>
+          <a href="{{ url_for('edit_profile') }}" class="hidemobile">Edit Profile</a>
+          <a href="{{ url_for('user', username=current_user.username) }}" class="hidemobile"><i class="fa-solid fa-user"></i>
+              {{current_user.username}}</a>
+          <a href="{{ url_for('logout') }}" class="hidemobile">Logout</a>
+
+
+
         <a href="javascript:showNavBar()"><i class="fa-solid fa-bars"></i></a>
-        <a href="javascript:window.history.back();"><i class="fa-solid fa-arrow-left"></i></a>
+        <a href="javascript:window.history.back();" class="hidemobile"><i class="fa-solid fa-arrow-left"></i></a>
 
 
       {% endif %}
@@ -101,6 +112,7 @@
       </div>
 
       <a href="{{ url_for('index') }}"><i class="fa-solid fa-house"></i> Home</a>
+      <a href="{{ url_for('about') }}"><i class="fa-solid fa-info"></i> About</a>
       <a href="{{ url_for('create_post') }}"><i class="fa-solid fa-plus"></i> Create Post</a>
       <a href="{{ url_for('search') }}"><i class="fa-solid fa-search"></i> Games</a>
       <a href="{{ url_for('user_search') }}"><i class="fa-solid fa-user"></i> Users</a>

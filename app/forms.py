@@ -3,7 +3,7 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField, Selec
     DateField, FileField, TimeField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, optional
 from app.models import User
-from datetime import datetime
+
 
 #CHOICES#
 

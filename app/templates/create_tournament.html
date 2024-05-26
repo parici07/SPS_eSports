@@ -2,52 +2,39 @@
 
 {% block content %}
 
-<h1>Create Tournament</h1>
-<form action="{{url_for('create_tournament')}}" method="post">
+<div class="centre">
+  <div class="create-form">
+    <h1>Create Tournament</h1>
+    <form action="{{url_for('create_tournament')}}" method="post">
 
-  {{ form.hidden_tag() }}
+      {{ form.hidden_tag() }}
 
-  <label for="tournament_name">Title</label>
-  <input type="text" name="tournament_name" id="tournament_name" required>
+      <label for="tournament_name">Title</label>
+      <input type="text" name="tournament_name" id="tournament_name" required>
 
-  <label for="tournament_description">Description</label>
-  <textarea name="tournament_description" id="tournament_description" required></textarea>
+      <label for="tournament_description">Description</label>
+      <textarea name="tournament_description" id="tournament_description" required></textarea>
 
-  <label for="tournament_start">Start Date</label>
-  <input type="date" name="tournament_start" id="tournament_start" required>
+      <label for="tournament_start">Start Date</label>
+      <input type="date" name="tournament_start" id="tournament_start" required>
 
-  <label for="tournament_end">End Date</label>
-  <input type="date" name="tournament_end" id="tournament_end" required>
+      <label for="tournament_end">End Date</label>
+      <input type="date" name="tournament_end" id="tournament_end" required>
 
-  <label for="tournament_skill_level">Skill Level</label>
-  <select name="tournament_skill_level" id="tournament_skill_level">
-    <option value="Any Skill Level">Any Skill Level</option>
-    <option value="Beginner">Beginner</option>
-    <option value="Intermediate">Intermediate</option>
-    <option value="Advanced">Advanced</option>
-    <option value="Expert">Expert</option>
-    <option value="Unsure">Unsure</option>
-  </select>
+      {{form.tournament_skill_level.label}}
+      {{form.tournament_skill_level}}
 
-  <label for="tournament_min_grade">Minimum Grade</label>
-    <select name="tournament_min_grade" id="tournament_min_grade">
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
-      <option value="6">6</option>
-      <option value="7">7</option>
-      <option value="8">8</option>
-      <option value="9">9</option>
-      <option value="10">10</option>
-      <option value="11">11</option>
-      <option value="12">12</option>
-    </select>
+      {{ form.tournament_min_grade.label }}
+      {{ form.tournament_min_grade }}
 
-  <label for="participants">Participants</label>
-  <input type="number" name="participants" id="participants" required>
+      <label for="participants">Participants (must be a power of 2)</label>
+      <input type="number" name="participants" id="participants" required>
 
-  <input type="submit" value="Create Tournament">
+      <input type="submit" value="Create Tournament">
 
-</form>
+    </form>
+  </div>
+</div>
+
 
 {% endblock %}
